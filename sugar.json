@@ -1,0 +1,13 @@
+{
+    "prefix":"##",
+    "admin_channel":"sugar-alerts",
+    "confidential_channel":"confidential",
+    "announcement_channel":"test-announcement-channel",
+    "votemute_minimum_votes":"2",
+    "roledata": {
+        "trusted":"Trusted",
+        "raid_participant":"Participant",
+        "moderator":"Moderator"
+    }
+
+}

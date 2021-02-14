@@ -9,11 +9,8 @@
   "author": "Shi",
   "license": "ISC",
   "dependencies": {
-    "delay": "^5.0.0",
     "discord.js": "^12.5.1",
-    "minecraft-data": "^2.74.0",
-    "mineflayer": "^2.41.0",
-    "mineflayer-pathfinder": "^1.4.0",
-    "prismarine-viewer": "^1.13.3"
+    "sequelize": "^6.5.0",
+    "uuid": "^8.3.2"
   }
 }
