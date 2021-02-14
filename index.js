@@ -87,7 +87,7 @@ function getUserInfo(message){
     if(message.member.roles.cache.find(role => role.name === config.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     return tempUserInfo
 }
-
+//aaaaaaaaaa
 //EVENT LISTENERS
 client.once('ready', async () => {
     //SYNC DATABASES
