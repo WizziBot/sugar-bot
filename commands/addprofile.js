@@ -4,27 +4,15 @@ module.exports = {
     accessLevel:4,
     async execute(member,profiles){
         try {
-            var rh = [
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'}
-            ];
-            var an = [
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'},
-                {sid:'None', value: 'None'}
-            ];
+            let rh = [];
+            let an = [];
             const user = await profiles.create({
                 user_id: member.id,
-                topic_history: JSON.stringify(th),
+                topic_history: JSON.stringify(rh),
                 additional_notes: JSON.stringify(an),
             });
+            let currDate = new Date()
+            console.log(`Created profile for user ${member.user.tag} at ${currDate}`)
         }
         catch (e) {
             if (e.name === 'SequelizeUniqueConstraintError') {

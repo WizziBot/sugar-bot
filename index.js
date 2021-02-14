@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const Sequelize = require('seqelize')
 const fs = require('fs');
-const PREFIX = "##";
 client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
@@ -33,15 +32,15 @@ const raids = sequelize.define('raids', {
 		type: Sequelize.STRING(18),
         allowNull: false
 	},
-	raid_history: {
+	start_date: {
 		type: Sequelize.STRING,
 		allowNull: true,
     },
-    additional_notes: {
+    end_date: {
         type: Sequelize.STRING,
         allowNull: true,
     },
-    sugar_guilds: {
+    description: {
         type: Sequelize.STRING,
         allowNull: false
     }
@@ -87,29 +86,38 @@ function getUserInfo(message){
     if(message.member.roles.cache.find(role => role.name === config.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     return tempUserInfo
 }
-//aaaaaaaaaa
+function filterUserId(user_ping){
+    let user_id = user_ping.slice('2','-1');
+    if(user_id.startsWith('!')){
+        user_id = user_id.slice('1');
+    }
+    return user_id;
+}
+
 //EVENT LISTENERS
 client.once('ready', async () => {
     //SYNC DATABASES
     profiles.sync();
+    guildsdata.sync();
+    raids.sync();
     //OTHER
-    client.user.setActivity(scrollArray[counter])
+    client.user.setActivity(`##help`);
 });
 
-client.on("guildCreate", function(guild){
-    console.log(`the client joins a guild`);
+client.on("guildCreate", guild => {
+    let currDate = new Date()
+    console.log(`Client has joined ${guild.name} at ${currDate}`);
 });
 
 client.on('guildMemberAdd', member => {
-    var currentTime = new Date();
+    let currentTime = new Date();
     console.log(`Member ${member.user.tag} Joined at ${currentTime}`);
     client.commands.get('addprofile').execute(member, profiles);
 });
 
 client.on("guildMemberRemove", member => {
-    var currentTime = new Date();
+    let currentTime = new Date();
     console.log(`Member ${member.user.tag} Left at ${currentTime}`);
-    client.commands.get('removeuser').execute(member, users);
     client.commands.get('removeprofile').execute(member, profiles);
 });
 
@@ -123,7 +131,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
     if (!user.bot) {
-        console.log('!user.bot completed');
         if (reaction.emoji.name === '\u2705') { //if the user reacted with the right emoji
 
             const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
@@ -137,14 +144,13 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
 });
-
 //ON COMMAND HANDLER
 client.on('message',async message => {
     try{
         //resolves command and args
         if(message.guild === null) return;
-        if(!message.content.startsWith(PREFIX) || message.author.bot) return;
-        const preargs = message.content.slice((PREFIX.length)).trim().split(' ');
+        if(!message.content.startsWith(config.prefix) || message.author.bot) return;
+        const preargs = message.content.slice((config.prefix.length)).trim().split(' ');
         const args = preargs.filter(function (el) {
             return el != '';
         });
@@ -152,10 +158,31 @@ client.on('message',async message => {
         const commandArgs = args.join(' ');
         //Gets user info
         let userInfo = getUserInfo(message)
-    
-        //commands
-
+        let cmdAccessLevel;
         if (client.commands.has(command)){
+            cmdAccessLevel = client.commands.get(command).accessLevel;
+        } else {
+            cmdAccessLevel = 0;
+        }
+        if (userInfo.accessLevel < cmdAccessLevel) {
+            message.channel.send(`Command requires a higher Access Level`).then(msg => {msg.delete({timeout:5000})})
+            return
+        }
+        //Commands
+        if (command === 'ping'){
+            message.channel.send(`Latency : \`${Math.round(message.client.ws.ping)}ms\``)
+        } else if (command === 'help'){
+            client.commands.get(command).execute(message)
+        } else if(command === 'forcejoin'){
+            try{
+                const user_id = filterUserId(commandArgs)
+                let forcejoin = message.guild.members.cache.get(user_id);
+                client.emit('guildMemberAdd', forcejoin);
+            } catch(e){
+                console.trace(e)
+                console.log('Error while trying to forcejoin a user.')
+            }
+        } else if (command === 'override'){
             
         }
     } catch(e) {

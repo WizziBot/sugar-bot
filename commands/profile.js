@@ -6,7 +6,7 @@ module.exports = {
         const Discord = require('discord.js');
         try{
             const user_ping = commandArgs;
-            var user_id;
+            let user_id;
             if(user_ping.startsWith('<')){
                 user_id = user_ping.slice('2','-1');
                 if(user_id.startsWith('!')){
