@@ -1,7 +1,7 @@
 
 module.exports = {
     name: 'addprofile',
-    accessLevel:3,
+    accessLevel:4,
     async execute(member,profiles){
         try {
             var rh = [

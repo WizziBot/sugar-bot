@@ -80,13 +80,14 @@ function getUserInfo(message){
         trusted: false,
         participant: false,
         moderator: false,
+        accessLevel: 0
     }
-    if(message.member.roles.cache.find(role => role.name === config.roledata.trusted)){tempUserInfo.trusted = true}
-    if(message.member.roles.cache.find(role => role.name === config.roledata.raid_participant)){tempUserInfo.participant = true}
-    if(message.member.roles.cache.find(role => role.name === config.roledata.moderator)){tempUserInfo.moderator = true}
+    if(message.member.roles.cache.find(role => role.name === config.roledata.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
+    if(message.member.roles.cache.find(role => role.name === config.roledata.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
+    if(message.member.roles.cache.find(role => role.name === config.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     return tempUserInfo
 }
-
+//aaaaaaaaaa
 //EVENT LISTENERS
 client.once('ready', async () => {
     //SYNC DATABASES
