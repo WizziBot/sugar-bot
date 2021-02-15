@@ -1,6 +1,6 @@
 module.exports = {
     name: 'profile',
-    accessLevel:3,
+    accessLevel:2,
     description: "Returns the user's profile information.",
     async execute(message, client, commandArgs, profiles){
         const Discord = require('discord.js');

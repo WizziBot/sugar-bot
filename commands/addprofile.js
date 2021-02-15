@@ -2,11 +2,11 @@
 module.exports = {
     name: 'addprofile',
     accessLevel:4,
-    async execute(member,profiles){
+    async execute(config,member,profiles){
         try {
             let rh = [];
             let an = [];
-            const user = await profiles.create({
+            profiles.create({
                 user_id: member.id,
                 topic_history: JSON.stringify(rh),
                 additional_notes: JSON.stringify(an),
@@ -16,10 +16,10 @@ module.exports = {
         }
         catch (e) {
             if (e.name === 'SequelizeUniqueConstraintError') {
-                return member.guild.channels.cache.find(ch => ch.name === 'profile-logging').send(`User ${member.user.tag} already exists in the Profile System.`);
+                return member.guild.channels.cache.find(ch => ch.name === config.admin_channel).send(`Profile for user ${member.user.tag} already exists.`);
             }
             console.log(e);
-            return member.guild.channels.cache.find(ch => ch.name === 'profile-logging').send(`Unknown Error ocurred while trying to add ${member.user.tag} to the Profile System.`);
+            return member.guild.channels.cache.find(ch => ch.name === config.admin_channel).send(`Unknown Error ocurred while trying to add ${member.user.tag} to the Profile System.`);
         }
     }
 }

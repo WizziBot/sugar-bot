@@ -1,5 +1,6 @@
 module.exports = {
     name: 'addtopic',
+    accessLevel:3,
     description: "this adds and entry on a topic of a user in the profile system.",
     async execute(message, commandArgs, profiles){
         try{
@@ -45,7 +46,7 @@ module.exports = {
                 message.channel.send(`Error: Could not find user in the database.`);
             }
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `-addtopic user (a sentence or two describing the topic)`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `-addraid user raid_id`');
         }
     }
 }

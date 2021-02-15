@@ -1,6 +1,6 @@
 module.exports = {
     name: 'profile',
-    accessLevel:3,
+    accessLevel:0,
     description: "Returns the user's profile information.",
     async execute(message){
         try{

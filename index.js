@@ -112,13 +112,13 @@ client.on("guildCreate", guild => {
 client.on('guildMemberAdd', member => {
     let currentTime = new Date();
     console.log(`Member ${member.user.tag} Joined at ${currentTime}`);
-    client.commands.get('addprofile').execute(member, profiles);
+    client.commands.get('addprofile').execute(config,member,profiles);
 });
 
 client.on("guildMemberRemove", member => {
     let currentTime = new Date();
     console.log(`Member ${member.user.tag} Left at ${currentTime}`);
-    client.commands.get('removeprofile').execute(member, profiles);
+    client.commands.get('removeprofile').execute(config,member,profiles);
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
@@ -183,7 +183,9 @@ client.on('message',async message => {
                 console.log('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            
+            //
+        } else if (command === 'addprofile'){
+            client.commands.get(command).execute(config,message.member,profiles)
         }
     } catch(e) {
         console.trace(e)
