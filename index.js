@@ -20,11 +20,11 @@ const guildsdata = sequelize.define('guildsdata', {
 		unique: true,
 	},
 	raid_history: {
-		type: Sequelize.STRING,
+		type: Sequelize.TEXT,
 		allowNull: true,
     },
-    additional_notes: {
-        type: Sequelize.STRING,
+    config: {
+        type: Sequelize.TEXT,
         allowNull: true,
     }
 });
@@ -34,15 +34,15 @@ const raids = sequelize.define('raids', {
         allowNull: false
 	},
 	start_date: {
-		type: Sequelize.STRING,
+		type: Sequelize.STRING(10),
 		allowNull: true,
     },
     end_date: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(10),
         allowNull: true,
     },
     description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
     }
 });
@@ -52,15 +52,15 @@ const profiles = sequelize.define('profiles', {
         unique: true,
 	},
 	raid_history: {
-		type: Sequelize.STRING,
+		type: Sequelize.TEXT,
 		allowNull: true,
     },
     additional_notes: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: true,
     },
     sugar_guilds: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
     }
 });
@@ -75,16 +75,16 @@ for(const file of commandFiles){
     client.commands.set(command.name, command);
 }
 //functions
-function getUserInfo(message){
+function getUserInfo(message,gConfig){
     let tempUserInfo = {
         trusted: false,
         participant: false,
         moderator: false,
         accessLevel: 0
     }
-    if(message.member.roles.cache.find(role => role.name === config.roledata.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
-    if(message.member.roles.cache.find(role => role.name === config.roledata.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
-    if(message.member.roles.cache.find(role => role.name === config.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
+    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
+    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
+    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     return tempUserInfo
 }
 function filterUserId(user_ping){
@@ -103,6 +103,7 @@ client.once('ready', async () => {
     raids.sync();
     //OTHER
     client.user.setActivity(`##help (not a command yet)`);
+    console.log('[READY]')
 });
 
 client.on("guildCreate", guild => {
@@ -157,9 +158,11 @@ client.on('message',async message => {
         });
         const command = args.shift().toLowerCase();
         const commandArgs = args.join(' ');
+        //Gets guild config
+        const gData = await JSON.parse(guildsdata.findOne({ where: { guild_id: message.guild.id } }));
         //Gets user info
-        let userInfo = getUserInfo(message)
-        console.log(`User ${message.member.user.tag} with access level ${userInfo.accessLevel} used ${command}`)
+        let userInfo = getUserInfo(message,gData.config)
+        console.log(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
             cmdAccessLevel = client.commands.get(command).accessLevel;
@@ -191,7 +194,7 @@ client.on('message',async message => {
         } else if(command === 'recipe'){
             client.commands.get(command).execute(config,message,commandArgs)
         } else if(command === 'setup'){
-            
+
         }
     } catch(e) {
         console.trace(e)
