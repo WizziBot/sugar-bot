@@ -6,6 +6,7 @@ client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
 const mcData = require('minecraft-data')('1.16.5')
+const guildSetup = require('./guildSetup')
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
@@ -82,14 +83,14 @@ function getUserInfo(message,gConfig){
         moderator: false,
         accessLevel: 0
     }
-    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
-    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
-    if(message.member.roles.cache.find(role => role.name === gConfig.roledata.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
+    if(message.member.roles.cache.find(role => role.name === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
+    if(message.member.roles.cache.find(role => role.name === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
+    if(message.member.roles.cache.find(role => role.name === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     return tempUserInfo
 }
 function filterUserId(user_ping){
     let user_id = user_ping.slice('2','-1');
-    if(user_id.startsWith('!')){
+    if(user_id.startsWith('!') || user_id.startsWith('&')){
         user_id = user_id.slice('1');
     }
     return user_id;
@@ -102,7 +103,7 @@ client.once('ready', async () => {
     guildsdata.sync();
     raids.sync();
     //OTHER
-    client.user.setActivity(`##help (not a command yet)`);
+    //client.user.setActivity(`##help (not a command yet)`);
     console.log('[READY]')
 });
 
@@ -133,7 +134,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
     if (!user.bot) {
-        if (reaction.emoji.name === '\u2705') { //if the user reacted with the right emoji
+        if (reaction.emoji.name === '\u2705' && reaction.message.id === '808044602342899754') { //if the user reacted with the right emoji
 
             const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
 
@@ -152,16 +153,27 @@ client.on('message',async message => {
         //resolves command and args
         if(message.guild === null) return;
         if(!message.content.startsWith(config.prefix) || message.author.bot) return;
-        const preargs = message.content.slice((config.prefix.length)).trim().split(' ');
-        const args = preargs.filter(function (el) {
-            return el != '';
-        });
+        const args = message.content.slice((config.prefix.length)).trim().split(/ +/);
         const command = args.shift().toLowerCase();
         const commandArgs = args.join(' ');
         //Gets guild config
-        const gData = await JSON.parse(guildsdata.findOne({ where: { guild_id: message.guild.id } }));
+        const gDataRaw = await guildsdata.findOne({ where: { guild_id: message.guild.id } });
+        //GUILD SETUP IF NO GUILD DATA
+        if(!gDataRaw){
+            if(command === 'setup'){
+                if(message.member.hasPermission('ADMINISTRATOR')){
+                    guildSetup.execute(message,guildsdata,filterUserId)
+                } else {
+                    message.reply('Only an administrator can perform this.')
+                }
+            } else {
+                message.reply('Sugar has not been setup on this server, ##setup to begin.')
+            }
+            return
+        }
+        const gData = JSON.parse(gDataRaw.config)
         //Gets user info
-        let userInfo = getUserInfo(message,gData.config)
+        let userInfo = getUserInfo(message,gData)
         console.log(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
@@ -170,7 +182,7 @@ client.on('message',async message => {
             cmdAccessLevel = 0;
         }
         if (userInfo.accessLevel < cmdAccessLevel) {
-            message.channel.send(`Command requires a higher Access Level`).then(msg => {msg.delete({timeout:5000})})
+            message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
             return
         }
         //Commands
@@ -193,8 +205,6 @@ client.on('message',async message => {
             client.commands.get(command).execute(config,message.member,profiles)
         } else if(command === 'recipe'){
             client.commands.get(command).execute(config,message,commandArgs)
-        } else if(command === 'setup'){
-
         }
     } catch(e) {
         console.trace(e)

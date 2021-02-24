@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { parse } = require('path')
 
 fs.readFile('./testjson.json', (err,data) => {
     let parsedData = JSON.parse(data.toString())
