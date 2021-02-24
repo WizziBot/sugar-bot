@@ -11,9 +11,8 @@ const guildSetup = require('./guildSetup')
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
 	host: 'localhost',
-	dialect: 'sqlite',
-    logging: false,
-    storage: 'database.sqlite',
+	dialect: 'mysql',
+    logging: false
 });
 const guildsdata = sequelize.define('guildsdata', {
 	guild_id: {
@@ -200,11 +199,13 @@ client.on('message',async message => {
                 console.log('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            //
+            client.commands.get(command).execute(config,message)
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(config,message.member,profiles)
         } else if(command === 'recipe'){
             client.commands.get(command).execute(config,message,commandArgs)
+        } else if(command === 'addraid'){
+            
         }
     } catch(e) {
         console.trace(e)

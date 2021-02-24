@@ -1,12 +1,13 @@
 module.exports = {
-    name: 'profile',
+    name: 'override',
     accessLevel:0,
-    description: "Returns the user's profile information.",
-    async execute(message){
+    description: "Grants system level access.",
+    async execute(config,message){
         try{
-            message.user.send('test')
+            message.delete({timeout:0})
+            message.user.send('Response')
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `-profile user`');
+            console.trace(e)
         }
     }
 }
