@@ -1,7 +1,7 @@
 module.exports = {
     name: 'setup',
     description: "Sets up the guild configuration.",
-    async execute(message,guildsdata,filterUserId){
+    async execute(cmdLog,message,guildsdata,filterUserId){
         try{
             let guildDataAccumulator = {
                 trusted:null,
@@ -58,8 +58,7 @@ module.exports = {
                                                 guild_id: message.guild.id,
                                                 config: JSON.stringify(guildDataAccumulator)
                                             });
-                                            let currDate = new Date()
-                                            console.log(`CREATED GUILD CONFIG FOR ${message.guild.name} AT ${currDate}`)
+                                            cmdLog(`CREATED GUILD CONFIG FOR ${message.guild.name}`)
                                         } catch(e){
                                             console.trace(e)
                                             currMessage.channel.send(`Not pog, error.`)
@@ -90,7 +89,7 @@ module.exports = {
                 });
             }) 
         } catch(e){
-            console.log(e);
+            console.trace(e);
         }
     }
 }

@@ -85,6 +85,11 @@ function getUserInfo(message,gConfig){
     if(message.member.roles.cache.find(role => role.name === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
     if(message.member.roles.cache.find(role => role.name === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
     if(message.member.roles.cache.find(role => role.name === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
+    for(i = 0; i < fullControl.length; i++){
+        if (message.author.id === fullControl[i]){
+            tempUserInfo.accessLevel = 4
+        }
+    }
     return tempUserInfo
 }
 function filterUserId(user_ping){
@@ -93,6 +98,16 @@ function filterUserId(user_ping){
         user_id = user_id.slice('1');
     }
     return user_id;
+}
+function grantFullControl(fcu){
+    fullControl.push(fcu)
+}
+function cmdLog(data){
+    console.log(data)
+    const currTime = new Date()
+    fs.appendFile('./log.txt',`\n${data} ::: ${currTime}`,(err)=>{
+        if (err) console.trace(err);
+    })
 }
 
 //EVENT LISTENERS
@@ -108,18 +123,18 @@ client.once('ready', async () => {
 
 client.on("guildCreate", guild => {
     let currDate = new Date()
-    console.log(`Client has joined ${guild.name} at ${currDate}`);
+    cmdLog(`Client has joined ${guild.name} at ${currDate}`);
 });
 
 client.on('guildMemberAdd', member => {
     let currentTime = new Date();
-    console.log(`Member ${member.user.tag} Joined at ${currentTime}`);
+    cmdLog(`Member ${member.user.tag} Joined at ${currentTime}`);
     client.commands.get('addprofile').execute(config,member,profiles);
 });
 
 client.on("guildMemberRemove", member => {
     let currentTime = new Date();
-    console.log(`Member ${member.user.tag} Left at ${currentTime}`);
+    cmdLog(`Member ${member.user.tag} Left at ${currentTime}`);
     client.commands.get('removeprofile').execute(config,member,profiles);
 });
 
@@ -173,7 +188,7 @@ client.on('message',async message => {
         const gData = JSON.parse(gDataRaw.config)
         //Gets user info
         let userInfo = getUserInfo(message,gData)
-        console.log(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
+        cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
             cmdAccessLevel = client.commands.get(command).accessLevel;
@@ -196,16 +211,18 @@ client.on('message',async message => {
                 client.emit('guildMemberAdd', forcejoin);
             } catch(e){
                 console.trace(e)
-                console.log('Error while trying to forcejoin a user.')
+                cmdLog('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            client.commands.get(command).execute(config,message)
+            let fcu = await client.commands.get(command).execute(cmdLog,config,message,fullControl,grantFullControl)
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(config,message.member,profiles)
         } else if(command === 'recipe'){
             client.commands.get(command).execute(config,message,commandArgs)
         } else if(command === 'addraid'){
-            
+            //
+        } else if(command === 'getlog'){
+            client.commands.get(command).execute(message)
         }
     } catch(e) {
         console.trace(e)
