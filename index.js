@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const Sequelize = require('seqelize')
+const Sequelize = require('sequelize')
 const fs = require('fs');
 client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
+const mcData = require('minecraft-data')('1.16.5')
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
@@ -101,7 +102,7 @@ client.once('ready', async () => {
     guildsdata.sync();
     raids.sync();
     //OTHER
-    client.user.setActivity(`##help`);
+    client.user.setActivity(`##help (not a command yet)`);
 });
 
 client.on("guildCreate", guild => {
@@ -158,6 +159,7 @@ client.on('message',async message => {
         const commandArgs = args.join(' ');
         //Gets user info
         let userInfo = getUserInfo(message)
+        console.log(`User ${message.member.user.tag} with access level ${userInfo.accessLevel} used ${command}`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
             cmdAccessLevel = client.commands.get(command).accessLevel;
@@ -186,6 +188,10 @@ client.on('message',async message => {
             //
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(config,message.member,profiles)
+        } else if(command === 'recipe'){
+            client.commands.get(command).execute(config,message,commandArgs)
+        } else if(command === 'setup'){
+            
         }
     } catch(e) {
         console.trace(e)
