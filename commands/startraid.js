@@ -2,20 +2,13 @@ module.exports = {
     name: 'startraid',
     accessLevel:3,
     description: "Starts a new raid to begin recording activity.",
-    async execute(cmdLog,message,commandArgs,raids){
+    async execute(cmdLog,gData,message,commandArgs,raids){
         try{
             const raid_name = commandArgs;
-
+            let ea = [];
             if(!raid_name){
                 message.channel.send('Syntax: `##startraid name`');
             }
-            //fetches profile
-            //gets date
-            var today = new Date();
-            var year = today.getFullYear();
-            var month = today.getMonth()+1;
-            var day = today.getDate();
-            var date = day+"-"+month+"-"+year;
             //gets a random id for the raid
             let randomRaidId;
             let ifexists;
@@ -23,19 +16,18 @@ module.exports = {
                 randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 ifexists = await raids.findOne({where : { raid_id : randomRaidId } })
             } while (ifexists)
-            const description = {
-                name: raid_name,
-                recorded_data: null
-            }
             //creates the the raid
             raids.create({
-                raid_id: member.id,
-                start_date: JSON.stringify(rh),
-                recorded_data: null 
+                raid_id: randomRaidId,
+                name: raid_name,
+                start_date: new Date(),
+                recorded_data: JSON.stringify(ea)
             });
-            message.channel.send(`Started Raid \`${newraid.description.name}\`.`);
-            cmdLog(`Started Raid \`${newraid.description.name}\`.`);
+            message.channel.send(`Started Raid \`${raid_name}\`.`);
+            message.member.guild.channels.cache.find(ch => ch.name === gData.announcment_channel).send(`Started Raid \`${raid_name}\`.`);
+            cmdLog(`Started Raid ${raid_name}.`);
         } catch(e){
+            console.trace(e)
             message.channel.send('Unknown Error. Please use the correct syntax: `##startraid name`');
         }
     }

@@ -44,7 +44,7 @@ const currentRaids = sequelize.define('currentraids', {
     },
     recorded_data: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: true
     }
 });
 const raids = sequelize.define('raids', {
@@ -52,6 +52,10 @@ const raids = sequelize.define('raids', {
 		type: Sequelize.STRING(4),
         unique: true
 	},
+    name: {
+        type: Sequelize.STRING(20),
+        allowNull: false
+    },
 	start_date: {
 		type: Sequelize.DATE,
 		allowNull: false
@@ -232,7 +236,7 @@ client.on('message',async message => {
         }
         //Commands
         if (command === 'ping'){
-            message.channel.send(`Latency : \`${Math.round(message.client.ws.ping)}ms\``)
+            message.channel.send(`Latency is \`${message.createdTimestamp - Date.now()}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
         } else if (command === 'help'){
             client.commands.get(command).execute(message)
         } else if(command === 'forcejoin'){
@@ -244,7 +248,7 @@ client.on('message',async message => {
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
             }
-        } else if (command === 'override'){
+        } else if (command === 'admin'){
             client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl);
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(cmdLog,gData,message.member,profiles);
@@ -257,13 +261,15 @@ client.on('message',async message => {
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'startraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,currentRaids);
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids);
         } else if (command === 'documentraid'){
             client.commands.get(command).execute(cmdLog,gData,message.member,raids);
         } else if (command === 'removeraid'){
             client.commands.get(command).execute(message.member,commandArgs,raids);
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
+        } else if (command === 'r') {
+            client.commands.get(command).execute(message,currentRaids);
         }
     } catch(e) {
         console.trace(e)

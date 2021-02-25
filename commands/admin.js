@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'override',
+    name: 'admin',
     accessLevel:0,
     description: "Grants system level access.",
     async execute(cmdLog,config,message,fullControl,grantFullControl){

@@ -5,6 +5,10 @@ module.exports = {
     async execute(message,commandArgs){
         const mcData = require('minecraft-data')('1.16.5')
         try{
+            if (!commandArgs){
+                message.channel.send('Syntax: `##recipe item_name`')
+                return
+            }
             let item = mcData.recipes[mcData.findItemOrBlockByName(commandArgs).id][0]
             let craftEmbed = {
                 color: 0x0099ff,
@@ -32,7 +36,7 @@ module.exports = {
             }
             message.channel.send({embed:craftEmbed})
         } catch(e){
-            message.reply(`Please use the correct syntax: \`##recipe item_name\``);
+            message.reply(`This item can not be crafted`);
         }
     }
 }
