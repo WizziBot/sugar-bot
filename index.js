@@ -257,15 +257,17 @@ client.on('message',async message => {
         } else if (command === 'recipe'){
             client.commands.get(command).execute(message,commandArgs);
         } else if (command === 'addraid'){
-            client.commands.get(command).execute(cmdLog,message.member,profiles,raids,filterUserId,idToName);
+            client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName);
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'startraid'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids);
         } else if (command === 'documentraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,raids);
+            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,currentRaids);
         } else if (command === 'removeraid'){
-            client.commands.get(command).execute(message.member,commandArgs,raids);
+            client.commands.get(command).execute(commandArgs,currentRaids);
+        } else if (command === 'removeoldraid'){
+            client.commands.get(command).execute(commandArgs,raids);
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {

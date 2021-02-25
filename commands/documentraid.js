@@ -2,7 +2,7 @@ module.exports = {
     name: 'documentraid',
     accessLevel:3,
     description: "Takes the current raid and formats it for long term storage.",
-    async execute(cmdLog,message,commandArgs,raids){
+    async execute(cmdLog,message,commandArgs,raids,currentRaids){
         try{
             const splitArgs = commandArgs.split(' ');
             const raid_name = splitArgs.shift();

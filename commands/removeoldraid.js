@@ -1,7 +1,7 @@
 module.exports = {
-    name: 'removeraid',
+    name: 'removeoldraid',
     accessLevel:4,
-    description: "Removes a current raid permanently.",
+    description: "Removes a raid documentation permanently.",
     async execute(commandArgs,raids){
         try{
             const raidId = commandArgs;

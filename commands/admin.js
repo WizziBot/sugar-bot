@@ -1,6 +1,6 @@
 module.exports = {
     name: 'admin',
-    accessLevel:0,
+    accessLevel:3,
     description: "Grants system level access.",
     async execute(cmdLog,config,message,fullControl,grantFullControl){
         try{
