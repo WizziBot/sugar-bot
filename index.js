@@ -221,7 +221,7 @@ client.on('message',async message => {
         } else if(command === 'recipe'){
             client.commands.get(command).execute(gData,message,commandArgs)
         } else if(command === 'addraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,raids,filterUserId)
+            client.commands.get(command).execute(cmdLog,gData,message.member,profiles,raids,filterUserId)
         } else if(command === 'getlog'){
             client.commands.get(command).execute(message)
         }
