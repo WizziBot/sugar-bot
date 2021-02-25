@@ -6,10 +6,12 @@ module.exports = {
         try {
             let rh = [];
             let an = [];
+            let gl = [];
             profiles.create({
                 user_id: member.id,
-                topic_history: JSON.stringify(rh),
+                raid_history: JSON.stringify(rh),
                 additional_notes: JSON.stringify(an),
+                sugar_guilds: JSON.stringify(gl)
             });
             let currDate = new Date()
             console.log(`Created profile for user ${member.user.tag} at ${currDate}`)

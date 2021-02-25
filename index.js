@@ -122,19 +122,17 @@ client.once('ready', async () => {
 });
 
 client.on("guildCreate", guild => {
-    let currDate = new Date()
-    cmdLog(`Client has joined ${guild.name} at ${currDate}`);
+    cmdLog(`Client has joined ${guild.name}`);
 });
 
-client.on('guildMemberAdd', member => {
-    let currentTime = new Date();
-    cmdLog(`Member ${member.user.tag} Joined at ${currentTime}`);
-    client.commands.get('addprofile').execute(config,member,profiles);
+client.on('guildMemberAdd', async member => {
+    cmdLog(`Member ${member.user.tag} Joined`);
+    const gData = await JSON.parse(guildsdata.findOne({ where: { guild_id: member.id } }).config);
+    client.commands.get('addprofile').execute(gData,member,profiles);
 });
 
 client.on("guildMemberRemove", member => {
-    let currentTime = new Date();
-    cmdLog(`Member ${member.user.tag} Left at ${currentTime}`);
+    cmdLog(`Member ${member.user.tag} Left`);
     client.commands.get('removeprofile').execute(config,member,profiles);
 });
 
@@ -176,7 +174,7 @@ client.on('message',async message => {
         if(!gDataRaw){
             if(command === 'setup'){
                 if(message.member.hasPermission('ADMINISTRATOR')){
-                    guildSetup.execute(message,guildsdata,filterUserId)
+                    guildSetup.execute(cmdLog,message,guildsdata,filterUserId)
                 } else {
                     message.reply('Only an administrator can perform this.')
                 }
