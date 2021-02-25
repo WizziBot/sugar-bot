@@ -6,7 +6,8 @@ client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
 //const mcData = require('minecraft-data')('1.16.5')
-const guildSetup = require('./guildSetup')
+const guildSetup = require('./guildSetup');
+const { description } = require('./guildSetup');
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
@@ -33,8 +34,12 @@ const currentRaids = sequelize.define('currentraids', {
 		type: Sequelize.STRING(4),
         unique: true
 	},
+    name: {
+        type: Sequelize.STRING(20),
+        allowNull: false
+    },
 	start_date: {
-		type: Sequelize.STRING(10),
+		type: Sequelize.DATE,
 		allowNull: false
     },
     recorded_data: {
@@ -49,15 +54,19 @@ const raids = sequelize.define('raids', {
 	},
 	start_date: {
 		type: Sequelize.DATE,
-		allowNull: true
+		allowNull: false
     },
     end_date: {
         type: Sequelize.DATE,
+        allowNull: false
+    },
+    recorded_data: {
+        type: Sequelize.TEXT,
         allowNull: true
     },
     description: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull:true
     }
 });
 const profiles = sequelize.define('profiles', {
@@ -248,7 +257,7 @@ client.on('message',async message => {
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'startraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,raids);
+            client.commands.get(command).execute(cmdLog,gData,message.member,currentRaids);
         } else if (command === 'documentraid'){
             client.commands.get(command).execute(cmdLog,gData,message.member,raids);
         } else if (command === 'removeraid'){

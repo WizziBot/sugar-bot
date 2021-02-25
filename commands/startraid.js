@@ -2,11 +2,13 @@ module.exports = {
     name: 'startraid',
     accessLevel:3,
     description: "Starts a new raid to begin recording activity.",
-    async execute(cmdLog,message,commandArgs,currentRaids){
+    async execute(cmdLog,message,commandArgs,raids){
         try{
-            const splitArgs = commandArgs.split(' ');
-            const raid_name = splitArgs.shift();
-            const newraid_id = splitArgs.join(' ');
+            const raid_name = commandArgs;
+
+            if(!raid_name){
+                message.channel.send('Syntax: `##startraid name`');
+            }
             //fetches profile
             //gets date
             var today = new Date();
@@ -31,10 +33,10 @@ module.exports = {
                 start_date: JSON.stringify(rh),
                 recorded_data: null 
             });
-            message.channel.send(`Documented \`${newraid.description.name}\` to the Raids Database.`);
-            cmdLog(`Documented \`${newraid.description.name}\` to the Raids Database.`);
+            message.channel.send(`Started Raid \`${newraid.description.name}\`.`);
+            cmdLog(`Started Raid \`${newraid.description.name}\`.`);
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `##documentraid name start_date(00/00/0000) end_date(00/00/0000) [description]`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##startraid name`');
         }
     }
 }

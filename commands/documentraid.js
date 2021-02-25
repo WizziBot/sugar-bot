@@ -7,7 +7,6 @@ module.exports = {
             const splitArgs = commandArgs.split(' ');
             const raid_name = splitArgs.shift();
             const newraid_id = splitArgs.join(' ');
-            //fetches profile
             //gets date
             var today = new Date();
             var year = today.getFullYear();
