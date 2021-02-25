@@ -2,19 +2,10 @@ module.exports = {
     name: 'addtopic',
     accessLevel:3,
     description: "this adds and entry on a topic of a user in the profile system.",
-    async execute(message, commandArgs, profiles){
+    async execute(message, commandArgs, profiles, filterUserId){
         try{
             const splitArgs = commandArgs.split(' ');
-            const user_ping = splitArgs.shift();
-            var user_id;
-            if(user_ping.startsWith('<')){
-                user_id = user_ping.slice('2','-1');
-                if(user_id.startsWith('!')){
-                    user_id = user_id.slice('1');
-                }
-            } else {
-                user_id = user_ping;
-            }
+            const user_id = filterUserId(splitArgs.shift());
             const newtopic = splitArgs.join(' ');
             
             //fetches profile

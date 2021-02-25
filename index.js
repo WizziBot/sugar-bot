@@ -208,7 +208,6 @@ client.on('message',async message => {
                 const user_id = filterUserId(commandArgs)
                 let forcejoin = message.guild.members.cache.get(user_id);
                 client.emit('guildMemberAdd', forcejoin);
-                cmdLog(`Force joined ${forcejoin.user.tag}`)
             } catch(e){
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
@@ -222,7 +221,7 @@ client.on('message',async message => {
         } else if(command === 'recipe'){
             client.commands.get(command).execute(gData,message,commandArgs)
         } else if(command === 'addraid'){
-            //
+            client.commands.get(command).execute(cmdLog,gData,message.member,raids,filterUserId)
         } else if(command === 'getlog'){
             client.commands.get(command).execute(message)
         }
