@@ -4,16 +4,19 @@ module.exports = {
     accessLevel:4,
     async execute(cmdLog,config,member,profiles){
         try {
-            let rh = [];
-            let an = [];
-            let gl = [];
-            profiles.create({
-                user_id: member.id,
-                raid_history: JSON.stringify(rh),
-                additional_notes: JSON.stringify(an),
-                sugar_guilds: JSON.stringify(gl)
-            });
-            cmdLog(`Created profile for user ${member.user.tag}`)
+            let ifexists = await profiles.findOne({ where: { user_id: member.id } })
+            if (!ifexists){
+                let rh = [];
+                let an = [];
+                let gl = [];
+                profiles.create({
+                    user_id: member.id,
+                    raid_history: JSON.stringify(rh),
+                    additional_notes: JSON.stringify(an),
+                    sugar_guilds: JSON.stringify(gl)
+                });
+                cmdLog(`Created profile for user ${member.user.tag}`)
+            }
         }
         catch (e) {
             if (e.name === 'SequelizeUniqueConstraintError') {

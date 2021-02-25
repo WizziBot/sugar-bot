@@ -5,9 +5,11 @@ module.exports = {
     async execute(member,profiles){
         try{
             const profile = await profiles.findOne({ where: { user_id: member.id } });
-            profile.destroy()
+            if(profile){
+                profile.destroy()
+            }
         } catch(e){
-            console.trace(e);
+            //
         }
     }
 }

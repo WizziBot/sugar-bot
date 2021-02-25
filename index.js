@@ -127,13 +127,14 @@ client.on("guildCreate", guild => {
 
 client.on('guildMemberAdd', async member => {
     cmdLog(`Member ${member.user.tag} Joined`);
-    const gData = await JSON.parse(guildsdata.findOne({ where: { guild_id: member.id } }).config);
-    client.commands.get('addprofile').execute(cmdLog,gData,member,profiles);
+    const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
+    if(gData){
+        client.commands.get('addprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
+    }
 });
 
 client.on("guildMemberRemove", member => {
     cmdLog(`Member ${member.user.tag} Left`);
-    client.commands.get('removeprofile').execute(member,profiles);
 });
 
 // client.on('messageReactionAdd', async (reaction, user) => {
@@ -207,6 +208,7 @@ client.on('message',async message => {
                 const user_id = filterUserId(commandArgs)
                 let forcejoin = message.guild.members.cache.get(user_id);
                 client.emit('guildMemberAdd', forcejoin);
+                cmdLog(`Force joined ${forcejoin.user.tag}`)
             } catch(e){
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
@@ -215,6 +217,8 @@ client.on('message',async message => {
             let fcu = await client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl)
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(cmdLog,gData,message.member,profiles)
+        } else if (command === 'removeprofile'){
+            client.commands.get('removeprofile').execute(message.member,profiles);
         } else if(command === 'recipe'){
             client.commands.get(command).execute(gData,message,commandArgs)
         } else if(command === 'addraid'){
