@@ -9,7 +9,6 @@ module.exports = {
                 moderator:null,
                 admin_channel:null,
                 announcment_channel:null,
-                confidential_channel:null,
                 vmmv:null
             }
             let filter = m => m.author.id === message.author.id
@@ -40,13 +39,13 @@ module.exports = {
                                 const annC = message.guild.channels.cache.find(r => r.id == ch_id)
                                 if(annC){
                                     guildDataAccumulator.announcment_channel = annC.name
-                                    datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\nAnnouncments Channel : ${guildDataAccumulator.announcment_channel}\n\n**Completed Channel Setup**.`)
+                                    datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\nAnnouncments Channel : ${guildDataAccumulator.announcment_channel}\n\n**Completed Channel Setup.**\n(Setup complete)`)
                                     try{
                                         guildsdata.create({
                                             guild_id: message.guild.id,
                                             config: JSON.stringify(guildDataAccumulator)
                                         });
-                                        cmdLog(`CREATED GUILD CONFIG FOR ${message.guild.name}`)
+                                        cmdLog(`CREATED GUILD CONFIG FOR [${message.guild.name}]`)
                                     } catch(e){
                                         console.trace(e)
                                         currMessage.channel.send(`UNKNOWN ERROR.`)
@@ -108,7 +107,7 @@ module.exports = {
                                     const modR = message.guild.roles.cache.find(r => r.id == role_id)
                                     if(modR){
                                         guildDataAccumulator.moderator = modR.name
-                                        datamsg.edit(`Trusted role : ${guildDataAccumulator.trusted}\nRaid Participant role : ${guildDataAccumulator.raid_participant}\nModerator role : ${guildDataAccumulator.moderator}\n\n**Completed Role Setup.**\n(Setup not complete yet)`)
+                                        datamsg.edit(`Trusted role : ${guildDataAccumulator.trusted}\nRaid Participant role : ${guildDataAccumulator.raid_participant}\nModerator role : ${guildDataAccumulator.moderator}\n\n**Completed Role Setup.**\n(Setup not complete)`)
                                         channelsData()
                                     } else {
                                         currMessage.channel.send(`Setup failed: Invalid Role`)

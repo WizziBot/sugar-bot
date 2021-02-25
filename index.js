@@ -128,37 +128,37 @@ client.on("guildCreate", guild => {
 client.on('guildMemberAdd', async member => {
     cmdLog(`Member ${member.user.tag} Joined`);
     const gData = await JSON.parse(guildsdata.findOne({ where: { guild_id: member.id } }).config);
-    client.commands.get('addprofile').execute(gData,member,profiles);
+    client.commands.get('addprofile').execute(cmdLog,gData,member,profiles);
 });
 
 client.on("guildMemberRemove", member => {
     cmdLog(`Member ${member.user.tag} Left`);
-    client.commands.get('removeprofile').execute(config,member,profiles);
+    client.commands.get('removeprofile').execute(member,profiles);
 });
 
-client.on('messageReactionAdd', async (reaction, user) => {
-    if (reaction.partial) { //this whole section just checks if the reaction is partial
-        try {
-            await reaction.fetch(); //fetches reaction because not every reaction is stored in the cache
-        } catch (error) {
-            console.error('Fetching message failed: ', error);
-            return;
-        }
-    }
-    if (!user.bot) {
-        if (reaction.emoji.name === '\u2705' && reaction.message.id === '808044602342899754') { //if the user reacted with the right emoji
+// client.on('messageReactionAdd', async (reaction, user) => {
+//     if (reaction.partial) { //this whole section just checks if the reaction is partial
+//         try {
+//             await reaction.fetch(); //fetches reaction because not every reaction is stored in the cache
+//         } catch (error) {
+//             console.error('Fetching message failed: ', error);
+//             return;
+//         }
+//     }
+//     if (!user.bot) {
+//         if (reaction.emoji.name === '\u2705' && reaction.message.id === '808044602342899754') { //if the user reacted with the right emoji
 
-            const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
+//             const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
 
-            const { guild } = reaction.message; //store the guild of the reaction in variable
+//             const { guild } = reaction.message; //store the guild of the reaction in variable
 
-            const member = guild.members.cache.find(member => member.id === user.id); //find the member who reacted (because user and member are seperate things)
+//             const member = guild.members.cache.find(member => member.id === user.id); //find the member who reacted (because user and member are seperate things)
 
-            member.roles.add(role); //assign selected role to member
+//             member.roles.add(role); //assign selected role to member
 
-        }
-    }
-});
+//         }
+//     }
+// });
 //ON COMMAND HANDLER
 client.on('message',async message => {
     try{
@@ -212,11 +212,11 @@ client.on('message',async message => {
                 cmdLog('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            let fcu = await client.commands.get(command).execute(cmdLog,config,message,fullControl,grantFullControl)
+            let fcu = await client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl)
         } else if (command === 'addprofile'){
-            client.commands.get(command).execute(config,message.member,profiles)
+            client.commands.get(command).execute(cmdLog,gData,message.member,profiles)
         } else if(command === 'recipe'){
-            client.commands.get(command).execute(config,message,commandArgs)
+            client.commands.get(command).execute(gData,message,commandArgs)
         } else if(command === 'addraid'){
             //
         } else if(command === 'getlog'){
