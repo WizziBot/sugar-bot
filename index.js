@@ -5,7 +5,7 @@ const fs = require('fs');
 client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
-const mcData = require('minecraft-data')('1.16.5')
+//const mcData = require('minecraft-data')('1.16.5')
 const guildSetup = require('./guildSetup')
 //DATABASES INITIALIZATION
 
