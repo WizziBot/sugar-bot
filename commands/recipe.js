@@ -2,7 +2,7 @@ module.exports = {
     name: 'recipe',
     accessLevel:0,
     description: "Returns recipe of minecraft item.",
-    async execute(config,message,commandArgs){
+    async execute(message,commandArgs){
         const mcData = require('minecraft-data')('1.16.5')
         try{
             let item = mcData.recipes[mcData.findItemOrBlockByName(commandArgs).id][0]
@@ -32,7 +32,7 @@ module.exports = {
             }
             message.channel.send({embed:craftEmbed})
         } catch(e){
-            message.reply(`Please use the correct syntax: \`${config.prefix}recipe item_name\``);
+            message.reply(`Please use the correct syntax: \`##recipe item_name\``);
         }
     }
 }

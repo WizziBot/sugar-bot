@@ -68,6 +68,7 @@ module.exports = {
                     });
                 })
             }
+            
             message.channel.send('Enter the role of **Trusted** members (Members that can be trusted).').then(datamsg => {
                 message.channel.awaitMessages(filter, {
                     max: 1,
@@ -136,6 +137,7 @@ module.exports = {
             }) 
         } catch(e){
             console.trace(e);
+            message.channel.send('Unknown Error.')
         }
     }
 }

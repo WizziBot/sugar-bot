@@ -2,39 +2,37 @@ module.exports = {
     name: 'addtopic',
     accessLevel:3,
     description: "this adds and entry on a topic of a user in the profile system.",
-    async execute(message,commandArgs,profiles,raids,filterUserId){
+    async execute(cmdLog,message,commandArgs,raids,idToName){
         try{
             const splitArgs = commandArgs.split(' ');
-            const user_id = filterUserId(splitArgs.shift());
-            const newtopic = splitArgs.join(' ');
-            
+            const raid_name = splitArgs.shift();
+            const newraid_id = splitArgs.join(' ');
             //fetches profile
-            const profile = await profiles.findOne({ where: { user_id: user_id } });
-            if(profile){
-                //deletes first entry if there are 6 or more (which there shouldnt be more than 6)
-                var topic_history = JSON.parse(profile.topic_history);
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth()+1;
-                var day = today.getDate();
-                var date = day+"-"+month+"-"+year;
-                topic_history.push({
-                    lid: message.author.tag + ' ' + date,
-                    value: newtopic,
-                });
+            //gets date
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth()+1;
+            var day = today.getDate();
+            var date = day+"-"+month+"-"+year;
+            //appends the raid name and id
+            let raid_history = JSON.parse(profile.raid_history);
+            const randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+            raid_history.push({
+                raid_id: randomRaidId,
+                name: raid_name,
+            });
 
-                //add the modified list back into the profile
-                const affectedRows = await profiles.update({ topic_history: JSON.stringify(topic_history)}, { where: { user_id: user_id } });
-                if (affectedRows > 0) {
-                    message.channel.send(`Success in adding a Topic to the Topic History of the user.`);
-                } else {
-                    message.channel.send(`Unknown Error.`);
-                }
-            } else {
-                message.channel.send(`Error: Could not find user in the database.`);
-            }
+            //add the modified list back into the profile
+            profiles.create({
+                user_id: member.id,
+                raid_history: JSON.stringify(rh),
+                additional_notes: JSON.stringify(an),
+                sugar_guilds: JSON.stringify(gl)
+            });
+            message.channel.send(`Added raid \`${newraid.description.name}\` to the Raid History of the user.`);
+            cmdLog(`Added raid \`${newraid.description.name}\` to the Raid History of user ${idToName(user_id,message.guild)}.`);
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `-addraid user raid_id`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##documentraid name start_date(00/00/0000) end_date(00/00/0000)`');
         }
     }
 }

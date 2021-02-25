@@ -17,29 +17,29 @@ const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
 const guildsdata = sequelize.define('guildsdata', {
 	guild_id: {
 		type: Sequelize.STRING(18),
-		unique: true,
+		unique: true
 	},
 	raid_history: {
 		type: Sequelize.TEXT,
-		allowNull: true,
+		allowNull: true
     },
     config: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: true
     }
 });
 const raids = sequelize.define('raids', {
 	raid_id: {
 		type: Sequelize.STRING(18),
-        allowNull: false
+        unique: true
 	},
 	start_date: {
 		type: Sequelize.STRING(10),
-		allowNull: true,
+		allowNull: true
     },
     end_date: {
         type: Sequelize.STRING(10),
-        allowNull: true,
+        allowNull: true
     },
     description: {
         type: Sequelize.TEXT,
@@ -49,15 +49,15 @@ const raids = sequelize.define('raids', {
 const profiles = sequelize.define('profiles', {
 	user_id: {
 		type: Sequelize.STRING(18),
-        unique: true,
+        unique: true
 	},
 	raid_history: {
 		type: Sequelize.TEXT,
-		allowNull: true,
+		allowNull: true
     },
     additional_notes: {
         type: Sequelize.TEXT,
-        allowNull: true,
+        allowNull: true
     },
     sugar_guilds: {
         type: Sequelize.TEXT,
@@ -108,6 +108,14 @@ function cmdLog(data){
     fs.appendFile('./log.txt',`\n${data} ::: ${currTime}`,(err)=>{
         if (err) console.trace(err);
     })
+}
+function idToName(id,guild){
+    try{
+        let uName = guild.members.cache.find(id_c => id_c == id).user.tag;
+        return uName
+    } catch(e) {
+        return id
+    }
 }
 
 //EVENT LISTENERS
@@ -213,17 +221,21 @@ client.on('message',async message => {
                 cmdLog('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            let fcu = await client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl)
+            client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl)
         } else if (command === 'addprofile'){
             client.commands.get(command).execute(cmdLog,gData,message.member,profiles)
         } else if (command === 'removeprofile'){
             client.commands.get('removeprofile').execute(message.member,profiles);
-        } else if(command === 'recipe'){
-            client.commands.get(command).execute(gData,message,commandArgs)
-        } else if(command === 'addraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,profiles,raids,filterUserId)
-        } else if(command === 'getlog'){
+        } else if (command === 'recipe'){
+            client.commands.get(command).execute(message,commandArgs)
+        } else if (command === 'addraid'){
+            client.commands.get(command).execute(cmdLog,message.member,profiles,raids,filterUserId,idToName)
+        } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
+        } else if (command === 'documentraid'){
+            client.commands.get(command).execute(cmdLog,gData,message.member,raids,idToName)
+        } else if (command === 'idtoname') {
+            message.reply(idToName(commandArgs,message.guild));
         }
     } catch(e) {
         console.trace(e)
