@@ -221,19 +221,21 @@ client.on('message',async message => {
                 cmdLog('Error while trying to forcejoin a user.')
             }
         } else if (command === 'override'){
-            client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl)
+            client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl);
         } else if (command === 'addprofile'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,profiles)
+            client.commands.get(command).execute(cmdLog,gData,message.member,profiles);
         } else if (command === 'removeprofile'){
-            client.commands.get('removeprofile').execute(message.member,profiles);
+            client.commands.get(command).execute(message.member,profiles);
         } else if (command === 'recipe'){
-            client.commands.get(command).execute(message,commandArgs)
+            client.commands.get(command).execute(message,commandArgs);
         } else if (command === 'addraid'){
-            client.commands.get(command).execute(cmdLog,message.member,profiles,raids,filterUserId,idToName)
+            client.commands.get(command).execute(cmdLog,message.member,profiles,raids,filterUserId,idToName);
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'documentraid'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,raids,idToName)
+            client.commands.get(command).execute(cmdLog,gData,message.member,raids);
+        } else if (command === 'removeraid'){
+            client.commands.get(command).execute(message.member,commandArgs,raids);
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         }

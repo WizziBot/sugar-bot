@@ -4,7 +4,7 @@ module.exports = {
     accessLevel:4,
     async execute(cmdLog,config,member,profiles){
         try {
-            let ifexists = await profiles.findOne({ where: { user_id: member.id } })
+            const ifexists = await profiles.findOne({ where: { user_id: member.id } })
             if (!ifexists){
                 let rh = [];
                 let an = [];

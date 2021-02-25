@@ -14,25 +14,28 @@ module.exports = {
             var month = today.getMonth()+1;
             var day = today.getDate();
             var date = day+"-"+month+"-"+year;
-            //appends the raid name and id
-            let raid_history = JSON.parse(profile.raid_history);
-            const randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-            raid_history.push({
-                raid_id: randomRaidId,
+            //gets a random id for the raid
+            let randomRaidId;
+            let ifexists;
+            do{
+                randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                ifexists = await raids.findOne({where : { raid_id : randomRaidId } })
+            } while (ifexists)
+            const description = {
                 name: raid_name,
-            });
-
-            //add the modified list back into the profile
-            profiles.create({
-                user_id: member.id,
+                recorded_data: null
+            }
+            //creates the the raid
+            raids.create({
+                raid_id: member.id,
                 raid_history: JSON.stringify(rh),
                 additional_notes: JSON.stringify(an),
                 sugar_guilds: JSON.stringify(gl)
             });
-            message.channel.send(`Added raid \`${newraid.description.name}\` to the Raid History of the user.`);
-            cmdLog(`Added raid \`${newraid.description.name}\` to the Raid History of user ${idToName(user_id,message.guild)}.`);
+            message.channel.send(`Documented \`${newraid.description.name}\` to the Raids Database.`);
+            cmdLog(`Documented \`${newraid.description.name}\` to the Raids Database.`);
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `##documentraid name start_date(00/00/0000) end_date(00/00/0000)`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##documentraid name start_date(00/00/0000) end_date(00/00/0000) [description]`');
         }
     }
 }
