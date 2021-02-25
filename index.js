@@ -28,17 +28,31 @@ const guildsdata = sequelize.define('guildsdata', {
         allowNull: true
     }
 });
-const raids = sequelize.define('raids', {
+const currentRaids = sequelize.define('currentraids', {
 	raid_id: {
-		type: Sequelize.STRING(18),
+		type: Sequelize.STRING(4),
         unique: true
 	},
 	start_date: {
 		type: Sequelize.STRING(10),
+		allowNull: false
+    },
+    recorded_data: {
+        type: Sequelize.TEXT,
+        allowNull: false
+    }
+});
+const raids = sequelize.define('raids', {
+	raid_id: {
+		type: Sequelize.STRING(4),
+        unique: true
+	},
+	start_date: {
+		type: Sequelize.DATE,
 		allowNull: true
     },
     end_date: {
-        type: Sequelize.STRING(10),
+        type: Sequelize.DATE,
         allowNull: true
     },
     description: {
@@ -124,6 +138,7 @@ client.once('ready', async () => {
     profiles.sync();
     guildsdata.sync();
     raids.sync();
+    currentRaids.sync();
     //OTHER
     //client.user.setActivity(`##help (not a command yet)`);
     console.log('[READY]')
@@ -232,6 +247,8 @@ client.on('message',async message => {
             client.commands.get(command).execute(cmdLog,message.member,profiles,raids,filterUserId,idToName);
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
+        } else if (command === 'startraid'){
+            client.commands.get(command).execute(cmdLog,gData,message.member,raids);
         } else if (command === 'documentraid'){
             client.commands.get(command).execute(cmdLog,gData,message.member,raids);
         } else if (command === 'removeraid'){

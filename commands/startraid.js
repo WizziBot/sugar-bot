@@ -1,8 +1,8 @@
 module.exports = {
-    name: 'documentraid',
+    name: 'startraid',
     accessLevel:3,
-    description: "Takes the current raid and formats it for long term storage.",
-    async execute(cmdLog,message,commandArgs,raids,idToName){
+    description: "Starts a new raid to begin recording activity.",
+    async execute(cmdLog,message,commandArgs,currentRaids){
         try{
             const splitArgs = commandArgs.split(' ');
             const raid_name = splitArgs.shift();
@@ -28,9 +28,8 @@ module.exports = {
             //creates the the raid
             raids.create({
                 raid_id: member.id,
-                raid_history: JSON.stringify(rh),
-                additional_notes: JSON.stringify(an),
-                sugar_guilds: JSON.stringify(gl)
+                start_date: JSON.stringify(rh),
+                recorded_data: null 
             });
             message.channel.send(`Documented \`${newraid.description.name}\` to the Raids Database.`);
             cmdLog(`Documented \`${newraid.description.name}\` to the Raids Database.`);
