@@ -14,11 +14,11 @@ module.exports = {
             //grabs data
             const raidData = await raids.findOne({ where: { raid_id: eRaidId } });
             if(raidData){
-                if(raidData.guild_id === message.guild.id || al === 4){
+                if(raidData.guild_id === message.guild.id || al.accessLevel === 4){
                     //creates a new progress log entry
                     await storedRecData.create({
                         raid_id: raidData.raid_id,
-                        author: message.author.tag,
+                        author: `${al.prefix} [${message.author.tag}]`,
                         data: pUpdate
                     });
                     cmdLog(`Added Progress Update by ${message.author.tag} to Raid ${raidData.name}.`);
