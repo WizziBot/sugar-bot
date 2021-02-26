@@ -6,8 +6,6 @@ client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
 const guildSetup = require('./guildSetup');
-const { description } = require('./guildSetup');
-const { accessLevel } = require('./commands/documentraid');
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
@@ -176,7 +174,7 @@ client.once('ready', async () => {
     currentRaids.sync();
     storedRecData.sync();
     //OTHER
-    //client.user.setActivity(`##help (not a command yet)`);
+    client.user.setActivity(`##help (not a command yet)`);
     console.log('[READY]')
 });
 
@@ -265,7 +263,7 @@ client.on('message',async message => {
             cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.channel.send(`Latency is \`${message.createdTimestamp - Date.now()}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
         } else if (command === 'help'){
-            client.commands.get(command).execute(message)
+            client.commands.get(command).execute(message,client,userInfo)
         } else if(command === 'forcejoin'){
             cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             try{

@@ -31,7 +31,7 @@ module.exports = {
                 });
                 const affectedRows = await profiles.update({ sugar_guilds: JSON.stringify(inguilds)}, { where: { user_id: member.id } });
                 if (affectedRows > 0) {
-                    cmdLog(`Added Progress Update by ${member.author.tag} to Raid ${raidData.name}.`);
+                    cmdLog(`Added Progress Update by ${member.user.tag} to Raid ${raidData.name}.`);
                 } else {
                     cmdLog(`Unknown Error while modifying profile.`);
                 }
