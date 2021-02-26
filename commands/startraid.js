@@ -21,6 +21,7 @@ module.exports = {
             raids.create({
                 raid_id: randomRaidId,
                 name: raid_name,
+                guild_id:message.guild.id,
                 start_date: new Date(),
                 recorded_data: JSON.stringify(ea)
             });

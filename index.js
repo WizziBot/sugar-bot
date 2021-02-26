@@ -5,7 +5,6 @@ const fs = require('fs');
 client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
-//const mcData = require('minecraft-data')('1.16.5')
 const guildSetup = require('./guildSetup');
 const { description } = require('./guildSetup');
 //DATABASES INITIALIZATION
@@ -34,22 +33,18 @@ const currentRaids = sequelize.define('currentraids', {
 		type: Sequelize.STRING(4),
         unique: true
 	},
-    guild_id: {
-        type: Sequelize.STRING(18),
-        allowNull: false
-    },
     name: {
         type: Sequelize.STRING(20),
+        allowNull: false
+    },
+    guild_id: {
+        type: Sequelize.STRING(18),
         allowNull: false
     },
 	start_date: {
 		type: Sequelize.DATE,
 		allowNull: false
     },
-    recorded_data: {
-        type: Sequelize.STRING(4),
-        allowNull: true
-    }
 });
 const storedRecData = sequelize.define('storedrecdata', {
 	raid_id: {
@@ -86,12 +81,8 @@ const raids = sequelize.define('raids', {
         type: Sequelize.DATE,
         allowNull: false
     },
-    recorded_data: {
-        type: Sequelize.TEXT,
-        allowNull: true
-    },
     description: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING(2000),
         allowNull:true
     },
     participants: {
@@ -310,11 +301,11 @@ client.on('message',async message => {
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
-            client.commands.get(command).execute(message,currentRaids);
+            client.commands.get(command).execute(message,currentRaids,storedRecData);
         } else if (command === 'rold') {
             client.commands.get(command).execute(message,raids);
         } else if (command === 'progress'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids);
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
         }
     } catch(e) {
         console.trace(e)
