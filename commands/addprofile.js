@@ -1,4 +1,3 @@
-
 module.exports = {
     name: 'addprofile',
     accessLevel:4,
@@ -8,7 +7,10 @@ module.exports = {
             if (!ifexists){
                 let rh = [];
                 let an = [];
-                let gl = [];
+                let gl = [{
+                    id: member.guild.id,
+                    name: member.guild.name
+                }];
                 profiles.create({
                     user_id: member.id,
                     raid_history: JSON.stringify(rh),
@@ -16,6 +18,23 @@ module.exports = {
                     sugar_guilds: JSON.stringify(gl)
                 });
                 cmdLog(`Created profile for user ${member.user.tag}`)
+            } else {
+                let inguilds = JSON.parse(ifexists.sugar_guilds)
+                for (i = 0; i < inguilds.length; i++){
+                    if (inguilds[i].id === member.guild.id){
+                        return
+                    }
+                }
+                inguilds.push({
+                    id: member.guild.id,
+                    name: member.guild.name
+                });
+                const affectedRows = await profiles.update({ sugar_guilds: JSON.stringify(inguilds)}, { where: { user_id: member.id } });
+                if (affectedRows > 0) {
+                    cmdLog(`Added Progress Update by ${member.author.tag} to Raid ${raidData.name}.`);
+                } else {
+                    cmdLog(`Unknown Error while modifying profile.`);
+                }
             }
         }
         catch (e) {

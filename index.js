@@ -34,6 +34,10 @@ const currentRaids = sequelize.define('currentraids', {
 		type: Sequelize.STRING(4),
         unique: true
 	},
+    guild_id: {
+        type: Sequelize.STRING(18),
+        allowNull: false
+    },
     name: {
         type: Sequelize.STRING(20),
         allowNull: false
@@ -43,8 +47,22 @@ const currentRaids = sequelize.define('currentraids', {
 		allowNull: false
     },
     recorded_data: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING(4),
         allowNull: true
+    }
+});
+const storedRecData = sequelize.define('storedrecdata', {
+	raid_id: {
+		type: Sequelize.STRING(4),
+        unique: true
+	},
+    author: {
+        type: Sequelize.STRING(20),
+        allowNull: false
+    },
+    data: {
+        type: Sequelize.STRING(1000),
+        allowNull: false
     }
 });
 const raids = sequelize.define('raids', {
@@ -54,6 +72,10 @@ const raids = sequelize.define('raids', {
 	},
     name: {
         type: Sequelize.STRING(20),
+        allowNull: false
+    },
+    guild_id: {
+        type: Sequelize.STRING(18),
         allowNull: false
     },
 	start_date: {
@@ -156,6 +178,7 @@ client.once('ready', async () => {
     guildsdata.sync();
     raids.sync();
     currentRaids.sync();
+    storedRecData.sync();
     //OTHER
     //client.user.setActivity(`##help (not a command yet)`);
     console.log('[READY]')
@@ -234,6 +257,9 @@ client.on('message',async message => {
         } else {
             cmdAccessLevel = 0;
         }
+        if (command === 'forcejoin' || command === 'forcejoinall'){
+            cmdAccessLevel = 4;
+        }
         if (userInfo.accessLevel < cmdAccessLevel) {
             message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
             return
@@ -252,6 +278,15 @@ client.on('message',async message => {
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
             }
+        } else if(command === 'forcejoinall'){
+            message.guild.members.cache.forEach(mbr => {
+                try{
+                    client.emit('guildMemberAdd', mbr);
+                } catch(e){
+                    console.trace(e)
+                    cmdLog('Error while trying to forcejoin a user.')
+                }
+            })
         } else if (command === 'admin'){
             client.commands.get(command).execute(cmdLog,gData,message,fullControl,grantFullControl);
         } else if (command === 'addprofile'){

@@ -8,6 +8,12 @@ module.exports = {
             const raidsData = await raids.findAll();
             if(raidsData){
                 for(i = 0; i < raidsData.length; i++){
+                    let gName;
+                    message.client.guilds.cache.forEach(g => {
+                        if (g.id === raidsData[i].dataValues.guild_id){
+                            gName = g.name
+                        }
+                    })
                     // let jparsed = JSON.parse(raidsData[i].dataValues.recorded_data)
                     // let parsedRecorded = '';
                     // if (jparsed.length !== 0){
@@ -18,7 +24,7 @@ module.exports = {
                     //         }
                     //     }
                     // }
-                    message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nStart Date: ${raidsData[i].dataValues.start_date}\nEnd Date: ${raidsData[i].dataValues.end_date}\nName: ${raidsData[i].dataValues.description}\n-----------------------`)
+                    message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nEnd Date: ${raidsData[i].dataValues.end_date}\nName: ${raidsData[i].dataValues.description}\n-----------------------`)
                 }
             }
         } catch(e){
