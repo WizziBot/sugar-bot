@@ -2,14 +2,17 @@ module.exports = {
     name: 'removeraid',
     accessLevel:4,
     description: "Removes a current raid permanently.",
-    async execute(message,commandArgs,raids){
+    async execute(commandArgs,raids,storedRecData){
         try{
             const raidId = commandArgs;
             const raid = await raids.findOne({ where: { raid_id: raidId } });
             if(raid){
-                raid.destroy()
+                await raid.destroy()
+                let jparsed = await storedRecData.findAll({ where: { raid_id: raidId } });
+                for(u = 0; u < jparsed.length; u++){
+                    await jparsed[u].destroy()
+                }
             }
-            
         } catch(e){
             console.trace(e)
         }

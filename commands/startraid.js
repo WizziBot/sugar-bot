@@ -27,7 +27,7 @@ module.exports = {
                 recorded_data: JSON.stringify(ea)
             });
             message.channel.send(`Started Raid \`${raid_name}\`.`);
-            message.member.guild.channels.cache.find(ch => ch.name === gData.announcment_channel).send(`Started Raid \`${raid_name}\`.`);
+            message.member.guild.channels.cache.find(ch => ch.id === gData.announcment_channel).send(`Started Raid \`${raid_name}\`.`);
             cmdLog(`Started Raid ${raid_name}.`);
         } catch(e){
             console.trace(e)

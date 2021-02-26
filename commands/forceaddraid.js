@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'addraid',
+    name: 'forceaddraid',
     accessLevel:4,
     description: "Add a raid to a user's raid history.",
     async execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName){

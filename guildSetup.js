@@ -25,8 +25,8 @@ module.exports = {
                         const ch_id = filterUserId(currMessage.content)
                         const adminC = message.guild.channels.cache.find(r => r.id == ch_id)
                         if(adminC){
-                            guildDataAccumulator.admin_channel = adminC.name
-                            datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\n\nEnter the **Announcments Channel**.`)
+                            guildDataAccumulator.admin_channel = adminC.id
+                            datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\n\nEnter the **Announcments/Information Log Channel**.`)
                             message.channel.awaitMessages(filter, {
                                 max: 1,
                                 time: 30000,
@@ -38,7 +38,7 @@ module.exports = {
                                 const ch_id = filterUserId(currMessage.content)
                                 const annC = message.guild.channels.cache.find(r => r.id == ch_id)
                                 if(annC){
-                                    guildDataAccumulator.announcment_channel = annC.name
+                                    guildDataAccumulator.announcment_channel = annC.id
                                     datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\nAnnouncments Channel : ${guildDataAccumulator.announcment_channel}\n\n**Completed Channel Setup.**\n(Setup complete)`)
                                     try{
                                         let ea = [];
@@ -58,7 +58,7 @@ module.exports = {
                             })
                             .catch(collected => {
                                 console.trace(collected)
-                                message.channel.send(`Setup failed: ${collected}`);
+                                message.channel.send(`Setup failed: Timed out`);
                             });
                         } else {
                             currMessage.channel.send(`Setup failed: Invalid Channel`)
@@ -66,7 +66,7 @@ module.exports = {
                     })
                     .catch(collected => {
                         console.trace(collected)
-                        message.channel.send(`Setup failed: ${collected}`);
+                        message.channel.send(`Setup failed: Timed out`);
                     });
                 })
             }
@@ -83,7 +83,7 @@ module.exports = {
                     const role_id = filterUserId(currMessage.content)
                     const trustedR = message.guild.roles.cache.find(r => r.id == role_id)
                     if(trustedR){
-                        guildDataAccumulator.trusted = trustedR.name
+                        guildDataAccumulator.trusted = trustedR.id
                         datamsg.edit(`Trusted role : ${guildDataAccumulator.trusted}\n\nEnter the role of **Raid Participant** members (Members that are participating in the current raid).`)
                         message.channel.awaitMessages(filter, {
                             max: 1,
@@ -96,7 +96,7 @@ module.exports = {
                             const role_id = filterUserId(currMessage.content)
                             const participantR = message.guild.roles.cache.find(r => r.id == role_id)
                             if(participantR){
-                                guildDataAccumulator.raid_participant = participantR.name
+                                guildDataAccumulator.raid_participant = participantR.id
                                 datamsg.edit(`Trusted role : ${guildDataAccumulator.trusted}\nRaid Participant role : ${guildDataAccumulator.raid_participant}\n\nEnter the role of **Moderator** members (Members that are in charge of server moderation and managing raids).`)
                                 message.channel.awaitMessages(filter, {
                                     max: 1,
@@ -109,7 +109,7 @@ module.exports = {
                                     const role_id = filterUserId(currMessage.content)
                                     const modR = message.guild.roles.cache.find(r => r.id == role_id)
                                     if(modR){
-                                        guildDataAccumulator.moderator = modR.name
+                                        guildDataAccumulator.moderator = modR.id
                                         datamsg.edit(`Trusted role : ${guildDataAccumulator.trusted}\nRaid Participant role : ${guildDataAccumulator.raid_participant}\nModerator role : ${guildDataAccumulator.moderator}\n\n**Completed Role Setup.**\n(Setup not complete)`)
                                         channelsData()
                                     } else {
@@ -118,7 +118,7 @@ module.exports = {
                                 })
                                 .catch(collected => {
                                     console.trace(collected)
-                                    message.channel.send(`Setup failed: ${collected}`);
+                                    message.channel.send(`Setup failed: Timed out`);
                                 });
                             } else {
                                 currMessage.channel.send(`Setup failed: Invalid Role`)
@@ -126,7 +126,7 @@ module.exports = {
                         })
                         .catch(collected => {
                             console.trace(collected)
-                            message.channel.send(`Setup failed: ${collected}`);
+                            message.channel.send(`Setup failed: Timed out`);
                         });
                     } else {
                         currMessage.channel.send(`Setup failed: Invalid Role`)
@@ -134,7 +134,7 @@ module.exports = {
                 })
                 .catch(collected => {
                     console.trace(collected)
-                    message.channel.send(`Setup failed: ${collected}`);
+                    message.channel.send(`Setup failed: Timed out`);
                 });
             }) 
         } catch(e){

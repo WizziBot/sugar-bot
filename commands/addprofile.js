@@ -39,10 +39,10 @@ module.exports = {
         }
         catch (e) {
             if (e.name === 'SequelizeUniqueConstraintError') {
-                return member.guild.channels.cache.find(ch => ch.name === config.admin_channel).send(`Failed to create a profile : user ${member.user.tag} already exists.`);
+                return member.guild.channels.cache.find(ch => ch.id === config.admin_channel).send(`Failed to create a profile : user ${member.user.tag} already exists.`);
             }
             console.trace(e);
-            return member.guild.channels.cache.find(ch => ch.name === config.admin_channel).send(`Unknown Error ocurred while trying to create a profile for ${member.user.tag}.`);
+            return member.guild.channels.cache.find(ch => ch.id === config.admin_channel).send(`Unknown Error ocurred while trying to create a profile for ${member.user.tag}.`);
         }
     }
 }

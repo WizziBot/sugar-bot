@@ -128,9 +128,9 @@ function getUserInfo(member,gConfig){
         accessLevel: 0,
         prefix:''
     }
-    if(member.roles.cache.find(role => role.name === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1; tempUserInfo.prefix = '[T]'}
-    if(member.roles.cache.find(role => role.name === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2; tempUserInfo.prefix = '[P]'}
-    if(member.roles.cache.find(role => role.name === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]'}
+    if(member.roles.cache.find(role => role.id === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1; tempUserInfo.prefix = '[T]'}
+    if(member.roles.cache.find(role => role.id === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2; tempUserInfo.prefix = '[P]'}
+    if(member.roles.cache.find(role => role.id === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]'}
     for(i = 0; i < fullControl.length; i++){
         if (member.id === fullControl[i]){
             tempUserInfo.accessLevel = 4
@@ -291,7 +291,7 @@ client.on('message',async message => {
             client.commands.get(command).execute(message.member,profiles);
         } else if (command === 'recipe'){
             client.commands.get(command).execute(message,commandArgs);
-        } else if (command === 'addraid'){
+        } else if (command === 'forceaddraid'){
             client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName);
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
@@ -300,9 +300,9 @@ client.on('message',async message => {
         } else if (command === 'documentraid'){
             client.commands.get(command).execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData,userInfo.accessLevel);
         } else if (command === 'removeraid'){
-            client.commands.get(command).execute(message,commandArgs,currentRaids);
+            client.commands.get(command).execute(commandArgs,currentRaids,storedRecData);
         } else if (command === 'removeoldraid'){
-            client.commands.get(command).execute(message,commandArgs,raids);
+            client.commands.get(command).execute(commandArgs,raids,storedRecData);
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
@@ -312,7 +312,7 @@ client.on('message',async message => {
         } else if (command === 'progress'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo);
         } else if (command === 'sugarlegions'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,);
         }
     } catch(e) {
         console.trace(e)
