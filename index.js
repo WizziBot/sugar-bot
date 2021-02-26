@@ -7,6 +7,7 @@ const pkg = require('./package.json')
 const config = require('./sugar.json')
 const guildSetup = require('./guildSetup');
 const { description } = require('./guildSetup');
+const { accessLevel } = require('./commands/documentraid');
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
@@ -293,7 +294,7 @@ client.on('message',async message => {
         } else if (command === 'startraid'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,raids);
         } else if (command === 'documentraid'){
-            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData);
+            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData,userInfo.accessLevel);
         } else if (command === 'removeraid'){
             client.commands.get(command).execute(message,commandArgs,currentRaids);
         } else if (command === 'removeoldraid'){
@@ -301,11 +302,11 @@ client.on('message',async message => {
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
-            client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData);
+            client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData,userInfo.accessLevel);
         } else if (command === 'rold') {
             client.commands.get(command).execute(message,raids);
         } else if (command === 'progress'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo.accessLevel);
         } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
         }

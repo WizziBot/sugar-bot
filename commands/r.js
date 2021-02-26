@@ -2,9 +2,14 @@ module.exports = {
     name: 'r',
     accessLevel:2,
     description: "Displays information on current raid(s).",
-    async execute(message,commandArgs,raids,storedRecData){
+    async execute(message,commandArgs,raids,storedRecData,al){
         try{
             //grabs data
+            console.log(al)
+            if (commandArgs === 'all' && al < 3){
+                message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
+                return
+            }
             const raidsData = await raids.findAll();
             if(raidsData.length !== 0){
                 for(i = 0; i < raidsData.length; i++){
