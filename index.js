@@ -312,7 +312,7 @@ client.on('message',async message => {
         } else if (command === 'progress'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo);
         } else if (command === 'sugarlegions'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,);
+            client.commands.get(command).execute(message);
         }
     } catch(e) {
         console.trace(e)
