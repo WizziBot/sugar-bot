@@ -12,6 +12,7 @@ module.exports = {
             //gets a random id for the raid
             let randomRaidId;
             let ifexists;
+            let ifexists2;
             do{
                 randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 ifexists = await raids.findOne({where : { raid_id : randomRaidId } })

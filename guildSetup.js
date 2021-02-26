@@ -41,8 +41,10 @@ module.exports = {
                                     guildDataAccumulator.announcment_channel = annC.name
                                     datamsg.edit(`Alerts Channel : ${guildDataAccumulator.admin_channel}\nAnnouncments Channel : ${guildDataAccumulator.announcment_channel}\n\n**Completed Channel Setup.**\n(Setup complete)`)
                                     try{
+                                        let ea = [];
                                         guildsdata.create({
                                             guild_id: message.guild.id,
+                                            raid_history: JSON.stringify(ea),
                                             config: JSON.stringify(guildDataAccumulator)
                                         });
                                         cmdLog(`CREATED GUILD CONFIG FOR [${message.guild.name}]`)

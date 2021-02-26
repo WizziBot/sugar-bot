@@ -49,7 +49,7 @@ const currentRaids = sequelize.define('currentraids', {
 const storedRecData = sequelize.define('storedrecdata', {
 	raid_id: {
 		type: Sequelize.STRING(4),
-        unique: true
+        allowNull: false
 	},
     author: {
         type: Sequelize.STRING(20),
@@ -301,10 +301,12 @@ client.on('message',async message => {
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
-            client.commands.get(command).execute(message,currentRaids,storedRecData);
+            client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData);
         } else if (command === 'rold') {
             client.commands.get(command).execute(message,raids);
         } else if (command === 'progress'){
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
+        } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData);
         }
     } catch(e) {
