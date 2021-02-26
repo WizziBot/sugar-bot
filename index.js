@@ -164,7 +164,6 @@ function idToName(id,guild){
         return id
     }
 }
-
 //EVENT LISTENERS
 client.once('ready', async () => {
     //SYNC DATABASES
@@ -174,7 +173,7 @@ client.once('ready', async () => {
     currentRaids.sync();
     storedRecData.sync();
     //OTHER
-    client.user.setActivity(`##help (not a command yet)`);
+    client.user.setActivity(`##help`);
     console.log('[READY]')
 });
 
