@@ -2,6 +2,7 @@ module.exports = {
     name: 'startraid',
     accessLevel:3,
     description: "Starts a new raid to begin recording activity.",
+    syntax:"##startraid name",
     async execute(cmdLog,gData,message,commandArgs,raids,raidsold){
         try{
             const raid_name = commandArgs;

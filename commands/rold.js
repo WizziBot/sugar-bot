@@ -2,6 +2,7 @@ module.exports = {
     name: 'rold',
     accessLevel:1,
     description: "Displays information on past raid(s).",
+    syntax:"##rold [all/(raid_id)] (info_count)",
     async execute(message,raids){
         try{
             //grabs data

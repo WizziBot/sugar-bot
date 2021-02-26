@@ -262,13 +262,15 @@ client.on('message',async message => {
             cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.channel.send(`Latency is \`${message.createdTimestamp - Date.now()}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
         } else if (command === 'help'){
-            client.commands.get(command).execute(message,client,userInfo)
+            client.commands.get(command).execute(message,client,commandArgs,userInfo)
         } else if(command === 'forcejoin'){
             cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             try{
                 const user_id = filterUserId(commandArgs)
-                let forcejoin = message.guild.members.cache.get(user_id);
-                client.emit('guildMemberAdd', forcejoin);
+                const forcejoin = message.guild.members.cache.get(user_id);
+                if(forcejoin){
+                    client.emit('guildMemberAdd', forcejoin);
+                }
             } catch(e){
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
@@ -285,8 +287,8 @@ client.on('message',async message => {
             })
         } else if (command === 'admin'){
             client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl);
-        } else if (command === 'addprofile'){
-            client.commands.get(command).execute(cmdLog,gData,message.member,profiles);
+        } else if (command === 'profile'){
+            //
         } else if (command === 'removeprofile'){
             client.commands.get(command).execute(message.member,profiles);
         } else if (command === 'recipe'){

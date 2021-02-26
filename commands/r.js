@@ -2,6 +2,7 @@ module.exports = {
     name: 'r',
     accessLevel:2,
     description: "Displays information on current raid(s).",
+    syntax:"##r [all/(raid_id)] (info_count)",
     async execute(message,commandArgs,raids,storedRecData,al){
         try{
             let tTitle = '**Current Raids : This Sublegion**'

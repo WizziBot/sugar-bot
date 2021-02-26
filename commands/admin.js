@@ -2,6 +2,7 @@ module.exports = {
     name: 'admin',
     accessLevel:3,
     description: "Grants system level access.",
+    syntax:"##admin",
     async execute(cmdLog,message,fullControl,grantFullControl){
         try{
             message.delete({timeout:0})

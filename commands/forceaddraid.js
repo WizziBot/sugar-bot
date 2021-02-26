@@ -2,6 +2,7 @@ module.exports = {
     name: 'forceaddraid',
     accessLevel:4,
     description: "Add a raid to a user's raid history.",
+    syntax:"##forceaddraid user raid_id",
     async execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName){
         try{
             const splitArgs = commandArgs.split(' ');
@@ -35,7 +36,7 @@ module.exports = {
                 message.channel.send(`Error: Could not find user in the database.`);
             }
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `##addraid user raid_id`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##forceaddraid user raid_id`');
         }
     }
 }

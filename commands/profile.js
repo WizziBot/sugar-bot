@@ -2,6 +2,7 @@ module.exports = {
     name: 'profile',
     accessLevel:1,
     description: "Returns the user's profile information.",
+    syntax:"##profile user",
     async execute(message,client,commandArgs,profiles,filterUserId){
         const Discord = require('discord.js');
         try{

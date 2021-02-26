@@ -2,6 +2,7 @@ module.exports = {
     name: 'recipe',
     accessLevel:0,
     description: "Returns recipe of minecraft item.",
+    syntax:"##recipe item_name",
     async execute(message,commandArgs){
         const mcData = require('minecraft-data')('1.16.5')
         try{

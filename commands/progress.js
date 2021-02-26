@@ -2,6 +2,7 @@ module.exports = {
     name: 'progress',
     accessLevel:2,
     description: "Appends a progress log to a raid.",
+    syntax:"##progress raid_id progress_update",
     async execute(cmdLog,gData,message,commandArgs,raids,storedRecData,al){
         try{
             const splitArgs = commandArgs.split(' ');
