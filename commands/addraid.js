@@ -1,6 +1,6 @@
 module.exports = {
     name: 'addraid',
-    accessLevel:3,
+    accessLevel:4,
     description: "Add a raid to a user's raid history.",
     async execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName){
         try{
@@ -24,7 +24,7 @@ module.exports = {
                     const affectedRows = await profiles.update({ raid_history: JSON.stringify(raid_history)}, { where: { user_id: user_id } });
                     if (affectedRows > 0) {
                         message.channel.send(`Added raid \`${newraid.description.name}\` to the Raid History of the user.`);
-                        cmdLog(`Added raid \`${newraid.description.name}\` to the Raid History of user ${idToName(user_id,message.guild)}.`);
+                        cmdLog(`Added raid ${newraid.description.name} to the Raid History of user ${idToName(user_id,message.guild)}.`);
                     } else {
                         message.channel.send(`Unknown Error.`);
                     }

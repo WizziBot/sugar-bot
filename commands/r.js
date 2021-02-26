@@ -6,7 +6,7 @@ module.exports = {
         try{
             //grabs data
             const raidsData = await raids.findAll();
-            if(raidsData){
+            if(raidsData.length !== 0){
                 for(i = 0; i < raidsData.length; i++){
                     let jparsed = JSON.parse(raidsData[i].dataValues.recorded_data)
                     let parsedRecorded = '';
@@ -18,8 +18,10 @@ module.exports = {
                             }
                         }
                     }
-                    message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nStart Date: ${raidsData[i].dataValues.start_date}\nPast 5 information logs:\n${parsedRecorded}-----------------------`)
+                    message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nStart Date: ${raidsData[i].dataValues.start_date}\nPast 5 information logs:\n${parsedRecorded}-----------------------`)
                 }
+            } else {
+                message.channel.send(`No current raids.`)
             }
         } catch(e){
             console.trace(e)

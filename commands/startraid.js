@@ -2,7 +2,7 @@ module.exports = {
     name: 'startraid',
     accessLevel:3,
     description: "Starts a new raid to begin recording activity.",
-    async execute(cmdLog,gData,message,commandArgs,raids){
+    async execute(cmdLog,gData,message,commandArgs,raids,raidsold){
         try{
             const raid_name = commandArgs;
             let ea = [];
@@ -15,7 +15,8 @@ module.exports = {
             do{
                 randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 ifexists = await raids.findOne({where : { raid_id : randomRaidId } })
-            } while (ifexists)
+                ifexists2 = await raidsold.findOne({where : { raid_id : randomRaidId } })
+            } while (ifexists || ifexists2)
             //creates the the raid
             raids.create({
                 raid_id: randomRaidId,

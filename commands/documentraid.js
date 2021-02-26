@@ -2,38 +2,60 @@ module.exports = {
     name: 'documentraid',
     accessLevel:3,
     description: "Takes the current raid and formats it for long term storage.",
-    async execute(cmdLog,message,commandArgs,raids,currentRaids){
+    async execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData){
         try{
             const splitArgs = commandArgs.split(' ');
-            const raid_name = splitArgs.shift();
-            const newraid_id = splitArgs.join(' ');
-            //gets date
-            var today = new Date();
-            var year = today.getFullYear();
-            var month = today.getMonth()+1;
-            var day = today.getDate();
-            var date = day+"-"+month+"-"+year;
-            //gets a random id for the raid
-            let randomRaidId;
-            let ifexists;
-            do{
-                randomRaidId = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-                ifexists = await raids.findOne({where : { raid_id : randomRaidId } })
-            } while (ifexists)
-            const description = {
-                name: raid_name,
-                recorded_data: null
+            const newraid_id = splitArgs.shift();
+            const raidDesc = splitArgs.join(' ');
+            if (!newraid_id){
+                message.channel.send('Syntax: `##documentraid raid_id [description]`')
+                return
             }
-            //creates the the raid
-            raids.create({
-                raid_id: member.id,
-                raid_history: JSON.stringify(rh),
-                additional_notes: JSON.stringify(an),
-                sugar_guilds: JSON.stringify(gl)
-            });
-            message.channel.send(`Documented \`${newraid.description.name}\` to the Raids Database.`);
-            cmdLog(`Documented \`${newraid.description.name}\` to the Raids Database.`);
+            //gets tha raid to document
+            const raidToDoc = await currentRaids.findOne({ where: { raid_id : newraid_id } });
+            const allprofiles = await profiles.findAll();
+            if(raidToDoc){
+                let participants = []
+                for(let i = 0; i < allprofiles.length; i++){
+                    const currId = allprofiles[i].dataValues.user_id;
+                    const membData = message.guild.members.cache.find(dId => dId == currId);
+                    if(getUserInfo(membData,gData).participant){
+                        participants.push(membData.user.tag);
+                        let found = JSON.parse(allprofiles[i].dataValues.raid_history)
+                        if(found.length === 0){
+                            let appendObj = {
+                                id: raidToDoc.raid_id,
+                                name: raidToDoc.name
+                            };
+                            let newprof = [appendObj];
+                            await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
+                        } else {
+                            let appendObj = {
+                                id: raidToDoc.raid_id,
+                                name: raidToDoc.name
+                            };
+                            let newprof = [appendObj,...found];
+                            await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
+                        }
+                    }
+                }
+                //creates the the raid
+                await raids.create({
+                    raid_id: newraid_id,
+                    name: raidToDoc.name,
+                    start_date: raidToDoc.start_date,
+                    end_date: new Date(),
+                    recorded_data: raidToDoc.recorded_data,
+                    description: raidDesc,
+                    participants: JSON.stringify(participants),
+                });
+                raidToDoc.destroy()
+                cmdLog(`Documented ${raidToDoc.name} to the Raids Database.`);
+                message.channel.send(`Documented \`${raidToDoc.name}\` to the Raids Database.`);
+                message.member.guild.channels.cache.find(ch => ch.name === gData.announcment_channel).send(`Documented \`${raidToDoc.name}\` to the Raids Database.`);
+            }
         } catch(e){
+            console.trace(e)
             message.channel.send('Unknown Error. Please use the correct syntax: `##documentraid name start_date(00/00/0000) end_date(00/00/0000) [description]`');
         }
     }

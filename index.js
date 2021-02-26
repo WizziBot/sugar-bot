@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const Sequelize = require('sequelize')
 const fs = require('fs');
 client.commands = new Discord.Collection();
@@ -71,7 +71,11 @@ const raids = sequelize.define('raids', {
     description: {
         type: Sequelize.TEXT,
         allowNull:true
-    }
+    },
+    participants: {
+        type: Sequelize.TEXT,
+        allowNull:true
+    },
 });
 const profiles = sequelize.define('profiles', {
 	user_id: {
@@ -102,18 +106,18 @@ for(const file of commandFiles){
     client.commands.set(command.name, command);
 }
 //functions
-function getUserInfo(message,gConfig){
+function getUserInfo(member,gConfig){
     let tempUserInfo = {
         trusted: false,
         participant: false,
         moderator: false,
         accessLevel: 0
     }
-    if(message.member.roles.cache.find(role => role.name === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
-    if(message.member.roles.cache.find(role => role.name === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
-    if(message.member.roles.cache.find(role => role.name === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
+    if(member.roles.cache.find(role => role.name === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1}
+    if(member.roles.cache.find(role => role.name === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2}
+    if(member.roles.cache.find(role => role.name === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3}
     for(i = 0; i < fullControl.length; i++){
-        if (message.author.id === fullControl[i]){
+        if (member.id === fullControl[i]){
             tempUserInfo.accessLevel = 4
         }
     }
@@ -162,6 +166,7 @@ client.on("guildCreate", guild => {
 });
 
 client.on('guildMemberAdd', async member => {
+    if(member.user.bot){return}
     cmdLog(`Member ${member.user.tag} Joined`);
     const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
     if(gData){
@@ -170,32 +175,31 @@ client.on('guildMemberAdd', async member => {
 });
 
 client.on("guildMemberRemove", member => {
+    if(member.user.bot){return}
     cmdLog(`Member ${member.user.tag} Left`);
 });
 
-// client.on('messageReactionAdd', async (reaction, user) => {
-//     if (reaction.partial) { //this whole section just checks if the reaction is partial
-//         try {
-//             await reaction.fetch(); //fetches reaction because not every reaction is stored in the cache
-//         } catch (error) {
-//             console.error('Fetching message failed: ', error);
-//             return;
-//         }
-//     }
-//     if (!user.bot) {
-//         if (reaction.emoji.name === '\u2705' && reaction.message.id === '808044602342899754') { //if the user reacted with the right emoji
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.partial) { //this whole section just checks if the reaction is partial
+        try {
+            await reaction.fetch(); //fetches reaction because not every reaction is stored in the cache
+        } catch (error) {
+            console.error('Fetching message failed: ', error);
+            return;
+        }
+    }
+    if (!user.bot) {
+        if (reaction.emoji.name === '\u2705' && reaction.message.id === '814811061693448213') { //if the user reacted with the right emoji
+            const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
 
-//             const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
+            const { guild } = reaction.message; //store the guild of the reaction in variable
 
-//             const { guild } = reaction.message; //store the guild of the reaction in variable
+            const member = guild.members.cache.find(member => member.id === user.id); //find the member who reacted (because user and member are seperate things)
 
-//             const member = guild.members.cache.find(member => member.id === user.id); //find the member who reacted (because user and member are seperate things)
-
-//             member.roles.add(role); //assign selected role to member
-
-//         }
-//     }
-// });
+            member.roles.add(role); //assign selected role to member
+        }
+    }
+});
 //ON COMMAND HANDLER
 client.on('message',async message => {
     try{
@@ -222,7 +226,7 @@ client.on('message',async message => {
         }
         const gData = JSON.parse(gDataRaw.config)
         //Gets user info
-        let userInfo = getUserInfo(message,gData)
+        let userInfo = getUserInfo(message.member,gData)
         cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
@@ -261,17 +265,21 @@ client.on('message',async message => {
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'startraid'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids);
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,raids);
         } else if (command === 'documentraid'){
-            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,currentRaids);
+            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData);
         } else if (command === 'removeraid'){
-            client.commands.get(command).execute(commandArgs,currentRaids);
+            client.commands.get(command).execute(message,commandArgs,currentRaids);
         } else if (command === 'removeoldraid'){
-            client.commands.get(command).execute(commandArgs,raids);
+            client.commands.get(command).execute(message,commandArgs,raids);
         } else if (command === 'idtoname') {
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
             client.commands.get(command).execute(message,currentRaids);
+        } else if (command === 'rold') {
+            client.commands.get(command).execute(message,raids);
+        } else if (command === 'progress'){
+            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids);
         }
     } catch(e) {
         console.trace(e)
