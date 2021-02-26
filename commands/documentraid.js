@@ -54,7 +54,7 @@ module.exports = {
                     raidToDoc.destroy()
                     cmdLog(`Documented ${raidToDoc.name} to the Raids Database.`);
                     message.channel.send(`Documented \`${raidToDoc.name}\` to the Raids Database.`);
-                    message.member.guild.channels.cache.find(ch => ch.name === gData.announcment_channel).send(`Documented \`${raidToDoc.name}\` to the Raids Database.`);
+                    message.member.guild.channels.cache.find(ch => ch.id === gData.announcment_channel).send(`Documented \`${raidToDoc.name}\` to the Raids Database.`);
                 } else {
                     message.channel.send(`You can not edit that raid.`);
                 }

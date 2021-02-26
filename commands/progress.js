@@ -23,7 +23,7 @@ module.exports = {
                     });
                     cmdLog(`Added Progress Update by ${message.author.tag} to Raid ${raidData.name}.`);
                     message.channel.send(`Added Progress Update.`);
-                    message.member.guild.channels.cache.find(ch => ch.name === gData.announcment_channel).send(`Added Progress Update by \`${message.author.tag}\` to Raid \`${raidData.name}\`.`);
+                    message.member.guild.channels.cache.find(ch => ch.id === gData.announcment_channel).send(`Added Progress Update by \`${message.author.tag}\` to Raid \`${raidData.name}\`.`);
                 } else {
                     message.channel.send(`You can not edit that raid.`);
                 }
