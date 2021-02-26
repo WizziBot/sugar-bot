@@ -246,9 +246,9 @@ client.on('message',async message => {
         const gData = JSON.parse(gDataRaw.config)
         //Gets user info
         let userInfo = getUserInfo(message.member,gData)
-        cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
         let cmdAccessLevel;
         if (client.commands.has(command)){
+            cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             cmdAccessLevel = client.commands.get(command).accessLevel;
         } else {
             cmdAccessLevel = 0;
@@ -262,10 +262,12 @@ client.on('message',async message => {
         }
         //Commands
         if (command === 'ping'){
+            cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.channel.send(`Latency is \`${message.createdTimestamp - Date.now()}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
         } else if (command === 'help'){
             client.commands.get(command).execute(message)
         } else if(command === 'forcejoin'){
+            cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             try{
                 const user_id = filterUserId(commandArgs)
                 let forcejoin = message.guild.members.cache.get(user_id);
@@ -275,6 +277,7 @@ client.on('message',async message => {
                 cmdLog('Error while trying to forcejoin a user.')
             }
         } else if(command === 'forcejoinall'){
+            cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.guild.members.cache.forEach(mbr => {
                 try{
                     client.emit('guildMemberAdd', mbr);
@@ -304,6 +307,7 @@ client.on('message',async message => {
         } else if (command === 'removeoldraid'){
             client.commands.get(command).execute(commandArgs,raids,storedRecData);
         } else if (command === 'idtoname') {
+            cmdLog(`USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.reply(idToName(commandArgs,message.guild));
         } else if (command === 'r') {
             client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData,userInfo);

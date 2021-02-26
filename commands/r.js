@@ -4,6 +4,7 @@ module.exports = {
     description: "Displays information on current raid(s).",
     async execute(message,commandArgs,raids,storedRecData,al){
         try{
+            let tTitle = 'Current Server Raids'
             //grabs data
             if (commandArgs === 'all' && al.accessLevel < 3){
                 message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
@@ -11,6 +12,7 @@ module.exports = {
             }
             let raidsData;
             if (commandArgs === 'all'){
+                let tTitle = 'Current Raids'
                 raidsData = await raids.findAll();
             } else {
                 raidsData = await raids.findAll({ where: { guild_id: message.guild.id } });
@@ -34,7 +36,13 @@ module.exports = {
                                 }
                             }
                         }
-                        message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nPast 5 information logs:\n${parsedRecorded}-----------------------`)                
+                        let rEmbed = {
+                            color: 0x00ff00,
+                            title: tTitle,
+                            description: `-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nPast 5 information logs:\n${parsedRecorded}-----------------------`,
+                            timestamp: new Date(),
+                        };
+                        message.channel.send()                
                     }
                 }
             } else {
