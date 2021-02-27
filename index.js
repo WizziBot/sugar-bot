@@ -9,7 +9,7 @@ const guildSetup = require('./guildSetup');
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
-	host: 'localhost',
+	host: '81.101.41.153',
 	dialect: 'mysql',
     logging: false
 });
