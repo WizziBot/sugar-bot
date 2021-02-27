@@ -1,20 +1,13 @@
 module.exports = {
     name: 'profile',
-    accessLevel:3,
-    description: "Returns the user's profile information.",
-    async execute(message, client, commandArgs, profiles){
+    accessLevel:1,
+    description: "Returns the user's profile information. (Command not available)",
+    syntax:"##profile user (Command not available)",
+    async execute(message,client,commandArgs,profiles,filterUserId){
         const Discord = require('discord.js');
         try{
-            const user_ping = commandArgs;
-            var user_id;
-            if(user_ping.startsWith('<')){
-                user_id = user_ping.slice('2','-1');
-                if(user_id.startsWith('!')){
-                    user_id = user_id.slice('1');
-                }
-            } else {
-                user_id = user_ping;
-            }
+            const user_id = filterUserId(commandArgs);
+
             const profile = await profiles.findOne({ where: { user_id: user_id } });
             if (profile) {
                 //gets all the lecturer info and parses the stringified data
@@ -22,7 +15,12 @@ module.exports = {
                 const additional_notes = JSON.parse(profile.additional_notes);
 
                 const user_data =  client.users.cache.get(user_id);
-                const file = new Discord.MessageAttachment('./images/profile.png');
+                // let profileEmbed = {
+                //     color: 0x00ff00,
+                //     title: user_data.tag,
+                //     fields: [],
+                //     timestamp: new Date(),
+                // };
                 const profileEmbed = new Discord.MessageEmbed()
                 .setColor('#00ff00')
                 .setTitle('User Profile')
@@ -50,14 +48,12 @@ module.exports = {
                 )
                 .setTimestamp()
                 .setFooter("The Great Library Of Alexandria", message.member.guild.iconURL());
-
-                message.guild.channels.cache.find(ch => ch.name === 'profile-logging').send(`<@${message.author.id}>`);
-                message.guild.channels.cache.find(ch => ch.name === 'profile-logging').send({ files: [file], embed: profileEmbed });
+                message.channel.send({ embed: profileEmbed });
             } else {
                 message.channel.send(`Error: Could not find user in the database.`);
             }
         } catch(e){
-            message.channel.send('Unknown Error. Please use the correct syntax: `-profile user`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##profile user`');
         }
     }
 }
