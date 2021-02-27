@@ -29,12 +29,7 @@ module.exports = {
                     id: member.guild.id,
                     name: member.guild.name
                 });
-                const affectedRows = await profiles.update({ sugar_guilds: JSON.stringify(inguilds)}, { where: { user_id: member.id } });
-                if (affectedRows > 0) {
-                    cmdLog(`Added Progress Update by ${member.user.tag} to Raid ${raidData.name}.`);
-                } else {
-                    cmdLog(`Unknown Error while modifying profile.`);
-                }
+                await profiles.update({ sugar_guilds: JSON.stringify(inguilds)}, { where: { user_id: member.id } });
             }
         }
         catch (e) {

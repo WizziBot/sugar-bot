@@ -11,9 +11,10 @@ module.exports = {
                     return
                 }
             }
-            message.author.send('Enter generated system access key.').then(basmsg => {
+            message.author.send('Enter generated system access key.').then(async basmsg => {
                 const randomPass = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 cmdLog(`USER ${message.author.tag} GENERATED A SYSTEM ACCESS KEY : [${randomPass}]`)
+                await message.client.guilds.cache.get('803443354691698699').channels.cache.get('815182350303625226').send(`USER ${message.author.tag} GENERATED A SYSTEM ACCESS KEY : [${randomPass}]`)
                 let filter = m => m.author.id === message.author.id
                 basmsg.channel.awaitMessages(filter, {
                     max: 1,
