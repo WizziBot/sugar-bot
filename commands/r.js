@@ -13,7 +13,7 @@ module.exports = {
             }
             let raidsData;
             if (commandArgs === 'all'){
-                let tTitle = '**Current Raids : All Sublegions**'
+                tTitle = '**Current Raids : All Sublegions**'
                 raidsData = await raids.findAll();
             } else {
                 raidsData = await raids.findAll({ where: { guild_id: message.guild.id } });
