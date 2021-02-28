@@ -57,6 +57,10 @@ const storedRecData = sequelize.define('storedrecdata', {
     data: {
         type: Sequelize.STRING(1000),
         allowNull: false
+    },
+    date : {
+        type: Sequelize.DATE,
+        allowNull: false
     }
 });
 const raids = sequelize.define('raids', {
@@ -107,9 +111,9 @@ const profiles = sequelize.define('profiles', {
         allowNull: false
     }
 });
-//VOLATILE VARIABLE INITIALIZATION
+//VOLATILE GLOBAL VARIABLE INITIALIZATION
 let fullControl = []
-
+let adminChatChannels = new Map()
 //DISCORD BOT
 //collect commands from command folder
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -164,6 +168,16 @@ function idToName(id,guild){
         return id
     }
 }
+function adminChatInit(){
+    const allGuilds = guildsdata.findAll();
+    for (i = 0; i < allGuilds.length; i++){
+        const currGuild = allGuilds[i].dataValues;
+        adminChatChannels.set(currGuild.guild_id,currGuild.config.adminchat);
+    }
+}
+function acRelay(message){
+
+}
 //EVENT LISTENERS
 client.once('ready', async () => {
     //SYNC DATABASES
@@ -173,6 +187,7 @@ client.once('ready', async () => {
     currentRaids.sync();
     storedRecData.sync();
     //OTHER
+    adminChatInit() //Gets all the admin chat info
     client.user.setActivity(`##help`);
     console.log('[READY]')
 });
@@ -219,6 +234,10 @@ client.on('messageReactionAdd', async (reaction, user) => {
 //ON COMMAND HANDLER
 client.on('message',async message => {
     try{
+        const adminChatChannel = adminChatChannels.get(message.guild.id)
+        if(adminChatChannel === message.channel.id){
+            //
+        }
         //resolves command and args
         if(message.guild === null) return;
         if(!message.content.startsWith(config.prefix) || message.author.bot) return;
@@ -316,6 +335,10 @@ client.on('message',async message => {
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo);
         } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(message);
+        } else if (command === 'updatesetup'){
+            //
+        } else if (command === 'plogs'){
+            //
         }
     } catch(e) {
         console.trace(e)

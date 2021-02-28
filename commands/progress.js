@@ -20,7 +20,8 @@ module.exports = {
                     await storedRecData.create({
                         raid_id: raidData.raid_id,
                         author: `${al.prefix} [${message.author.tag}]`,
-                        data: pUpdate
+                        data: pUpdate,
+                        date: new Date()
                     });
                     cmdLog(`Added Progress Update by ${message.author.tag} to Raid ${raidData.name}.`);
                     message.channel.send(`Added Progress Update.`);
