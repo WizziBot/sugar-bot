@@ -141,3 +141,5 @@ Created profile for user Baltaazar#0243 ::: Sun Feb 28 2021 15:32:55 GMT+0000 (G
 CREATED GUILD CONFIG FOR [Sugar test] ::: Sun Feb 28 2021 15:53:35 GMT+0000 (Greenwich Mean Time)
 [Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [updateconfig] ::: Sun Feb 28 2021 16:18:26 GMT+0000 (Greenwich Mean Time)
 UPDATED GUILD CONFIG FOR [Sugar 'Caine Abusers BETA] ::: Sun Feb 28 2021 16:18:57 GMT+0000 (Greenwich Mean Time)
+Member SpeedfreakDBX#3050 Joined ::: Sun Feb 28 2021 16:38:43 GMT+0000 (Greenwich Mean Time)
+[Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [sugarlegions] ::: Sun Feb 28 2021 16:45:45 GMT+0000 (Greenwich Mean Time)

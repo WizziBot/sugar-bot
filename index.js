@@ -205,7 +205,7 @@ function acRelay(message){
                 }
             }
         } catch(e) {
-            console.trace(e)
+            //
         }
     })
 }
@@ -369,7 +369,11 @@ client.on('message',async message => {
         } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(message);
         } else if (command === 'updateconfig'){
-            client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId);
+            if(message.member.hasPermission('ADMINISTRATOR')){
+                client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId);
+            } else {
+                message.reply('Only an administrator can perform this.')
+            }
         } else if (command === 'plogs'){
             //
         } else if (command === 't'){

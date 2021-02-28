@@ -1,5 +1,6 @@
 module.exports = {
     name: 'updateconfig',
+    accessLevel: 3,
     description: "Updates the guild configuration.",
     async execute(cmdLog,message,guildsdata,filterUserId){
         try{
@@ -10,7 +11,6 @@ module.exports = {
                 admin_channel:null,
                 announcment_channel:null,
                 admin_chat:null,
-                vmmv:null
             }
             let filter = m => m.author.id === message.author.id
             function channelsData(){
