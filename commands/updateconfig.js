@@ -105,52 +105,54 @@ module.exports = {
                     if(trustedR){
                         guildDataAccumulator.trusted = trustedR.id
                         datamsg.edit(`Trusted role : ${trustedR.name}\n\nEnter the role of **Raid Participant** members (Members that are participating in the current raid).`)
-                        message.channel.awaitMessages(filter, {
-                            max: 1,
-                            time: 30000,
-                            errors: ['time']
-                        })
-                        .then(currMessage => {
-                            currMessage = currMessage.first()
-                            currMessage.delete({timeout:0})
-                            const role_id = filterUserId(currMessage.content)
-                            const participantR = message.guild.roles.cache.find(r => r.id == role_id)
-                            if(participantR){
-                                guildDataAccumulator.raid_participant = participantR.id
-                                datamsg.edit(`Trusted role : ${trustedR.name}\nRaid Participant role : ${participantR.name}\n\nEnter the role of **Moderator** members (Members that are in charge of server moderation and managing raids).`)
-                                message.channel.awaitMessages(filter, {
-                                    max: 1,
-                                    time: 30000,
-                                    errors: ['time']
-                                })
-                                .then(currMessage => {
-                                    currMessage = currMessage.first()
-                                    currMessage.delete({timeout:0})
-                                    const role_id = filterUserId(currMessage.content)
-                                    const modR = message.guild.roles.cache.find(r => r.id == role_id)
-                                    if(modR){
-                                        guildDataAccumulator.moderator = modR.id
-                                        datamsg.edit(`Trusted role : ${trustedR.name}\nRaid Participant role : ${participantR.name}\nModerator role : ${modR.name}\n\n**Completed Role Setup.**\n(Setup not complete)`)
-                                        channelsData()
-                                    } else {
-                                        currMessage.channel.send(`Setup failed: Invalid Role`)
-                                    }
-                                })
-                                .catch(collected => {
-                                    console.trace(collected)
-                                    message.channel.send(`Setup failed: Timed out`);
-                                });
-                            } else {
-                                currMessage.channel.send(`Setup failed: Invalid Role`)
-                            }
-                        })
-                        .catch(collected => {
-                            console.trace(collected)
-                            message.channel.send(`Setup failed: Timed out`);
-                        });
                     } else {
                         currMessage.channel.send(`Setup failed: Invalid Role`)
                     }
+                    
+                    message.channel.awaitMessages(filter, {
+                        max: 1,
+                        time: 30000,
+                        errors: ['time']
+                    })
+                    .then(currMessage => {
+                        currMessage = currMessage.first()
+                        currMessage.delete({timeout:0})
+                        const role_id = filterUserId(currMessage.content)
+                        const participantR = message.guild.roles.cache.find(r => r.id == role_id)
+                        if(participantR){
+                            guildDataAccumulator.raid_participant = participantR.id
+                            datamsg.edit(`Trusted role : ${trustedR.name}\nRaid Participant role : ${participantR.name}\n\nEnter the role of **Moderator** members (Members that are in charge of server moderation and managing raids).`)
+                            message.channel.awaitMessages(filter, {
+                                max: 1,
+                                time: 30000,
+                                errors: ['time']
+                            })
+                            .then(currMessage => {
+                                currMessage = currMessage.first()
+                                currMessage.delete({timeout:0})
+                                const role_id = filterUserId(currMessage.content)
+                                const modR = message.guild.roles.cache.find(r => r.id == role_id)
+                                if(modR){
+                                    guildDataAccumulator.moderator = modR.id
+                                    datamsg.edit(`Trusted role : ${trustedR.name}\nRaid Participant role : ${participantR.name}\nModerator role : ${modR.name}\n\n**Completed Role Setup.**\n(Setup not complete)`)
+                                    channelsData()
+                                } else {
+                                    currMessage.channel.send(`Setup failed: Invalid Role`)
+                                }
+                            })
+                            .catch(collected => {
+                                console.trace(collected)
+                                message.channel.send(`Setup failed: Timed out`);
+                            });
+                        } else {
+                            currMessage.channel.send(`Setup failed: Invalid Role`)
+                        }
+                    })
+                    .catch(collected => {
+                        console.trace(collected)
+                        message.channel.send(`Setup failed: Timed out`);
+                    });
+                
                 })
                 .catch(collected => {
                     console.trace(collected)

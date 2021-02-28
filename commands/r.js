@@ -34,7 +34,8 @@ module.exports = {
                             for(u = 0; u < 5; u++){
                                 const curjp = jparsed[jparsed.length - 1 - u]
                                 if (curjp){
-                                    parsedRecorded = `${parsedRecorded}${curjp.dataValues.author} : ${curjp.dataValues.data}\n`;
+                                    let d = curjp.dataValues.date
+                                    parsedRecorded = `${parsedRecorded}${curjp.dataValues.author} : ${curjp.dataValues.data} (${d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear()})\n`;
                                 }
                             }
                         }

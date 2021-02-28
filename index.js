@@ -357,7 +357,7 @@ client.on('message',async message => {
         } else if (command === 'admin'){
             client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl,adminChatInit);
         } else if (command === 'profile'){
-            //
+            //client.commands.get(command).execute(message,client,commandArgs,profiles,filterUserId);
         } else if (command === 'removeprofile'){
             client.commands.get(command).execute(message.member,profiles);
         } else if (command === 'recipe'){
