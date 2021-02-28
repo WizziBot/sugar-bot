@@ -168,15 +168,46 @@ function idToName(id,guild){
         return id
     }
 }
-function adminChatInit(){
-    const allGuilds = guildsdata.findAll();
+async function adminChatInit(){
+    const allGuilds = await guildsdata.findAll();
     for (i = 0; i < allGuilds.length; i++){
-        const currGuild = allGuilds[i].dataValues;
-        adminChatChannels.set(currGuild.guild_id,currGuild.config.adminchat);
+        try{
+            const currGuild = allGuilds[i].dataValues;
+            adminChatChannels.set(currGuild.guild_id,JSON.parse(currGuild.config).admin_chat);
+        } catch(e){
+            console.trace(e)
+        }
     }
 }
 function acRelay(message){
-
+    adminChatChannels.forEach(async (cid,gid) => {
+        try{
+            const acChannel = client.guilds.cache.get(gid).channels.cache.get(cid)
+            if(acChannel && cid !== message.channel.id){
+                const webhooks = await acChannel.fetchWebhooks();
+                if (webhooks.size === 0){
+                    acChannel.createWebhook('ACBOT', {
+                        avatar: 'https://i.imgur.com/wSTFkRM.png',
+                    }).then(webhook => {
+                        webhook.send({
+                            username: message.member.displayName,
+                            avatarURL: message.author.avatarURL(),
+                            content: message.content,
+                        });
+                    })
+                } else {
+                    const webhook = webhooks.first();
+                    await webhook.send({
+                        username: message.author.username,
+                        avatarURL: message.author.avatarURL(),
+                        content: message.content,
+                    });
+                }
+            }
+        } catch(e) {
+            console.trace(e)
+        }
+    })
 }
 //EVENT LISTENERS
 client.once('ready', async () => {
@@ -234,13 +265,15 @@ client.on('messageReactionAdd', async (reaction, user) => {
 //ON COMMAND HANDLER
 client.on('message',async message => {
     try{
+        if(message.author.bot) return;
         const adminChatChannel = adminChatChannels.get(message.guild.id)
         if(adminChatChannel === message.channel.id){
-            //
+            acRelay(message)
+            return
         }
         //resolves command and args
         if(message.guild === null) return;
-        if(!message.content.startsWith(config.prefix) || message.author.bot) return;
+        if(!message.content.startsWith(config.prefix)) return;
         const args = message.content.slice((config.prefix.length)).trim().split(/ +/);
         const command = args.shift().toLowerCase();
         const commandArgs = args.join(' ');
@@ -335,9 +368,11 @@ client.on('message',async message => {
             client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo);
         } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(message);
-        } else if (command === 'updatesetup'){
-            //
+        } else if (command === 'updateconfig'){
+            client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId);
         } else if (command === 'plogs'){
+            //
+        } else if (command === 't'){
             //
         }
     } catch(e) {

@@ -138,3 +138,6 @@ Added Progress Update by Shi#0300 to Raid MineLand. ::: Sun Feb 28 2021 13:52:55
 [Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [r] ::: Sun Feb 28 2021 15:00:27 GMT+0000 (Greenwich Mean Time)
 Member Baltaazar#0243 Joined ::: Sun Feb 28 2021 15:32:55 GMT+0000 (Greenwich Mean Time)
 Created profile for user Baltaazar#0243 ::: Sun Feb 28 2021 15:32:55 GMT+0000 (Greenwich Mean Time)
+CREATED GUILD CONFIG FOR [Sugar test] ::: Sun Feb 28 2021 15:53:35 GMT+0000 (Greenwich Mean Time)
+[Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [updateconfig] ::: Sun Feb 28 2021 16:18:26 GMT+0000 (Greenwich Mean Time)
+UPDATED GUILD CONFIG FOR [Sugar 'Caine Abusers BETA] ::: Sun Feb 28 2021 16:18:57 GMT+0000 (Greenwich Mean Time)

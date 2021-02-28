@@ -1,6 +1,6 @@
 module.exports = {
-    name: 'setup',
-    description: "Sets up the guild configuration.",
+    name: 'updateconfig',
+    description: "Updates the guild configuration.",
     async execute(cmdLog,message,guildsdata,filterUserId){
         try{
             let guildDataAccumulator = {
@@ -55,13 +55,10 @@ module.exports = {
                                             guildDataAccumulator.admin_chat = acC.id
                                             datamsg.edit(`Alerts Channel : ${adminC.name}\nAnnouncments Channel : ${annC.name}\nAdmin Chat Channel : ${acC.name}\n\n**Completed Channel Setup.**\n(Setup complete)`)
                                             try{
-                                                let ea = [];
-                                                guildsdata.create({
-                                                    guild_id: message.guild.id,
-                                                    raid_history: JSON.stringify(ea),
+                                                guildsdata.update({
                                                     config: JSON.stringify(guildDataAccumulator)
-                                                });
-                                                cmdLog(`CREATED GUILD CONFIG FOR [${message.guild.name}]`)
+                                                }, { where: { guild_id: message.guild.id } });
+                                                cmdLog(`UPDATED GUILD CONFIG FOR [${message.guild.name}]`)
                                             } catch(e){
                                                 console.trace(e)
                                                 currMessage.channel.send(`UNKNOWN ERROR.`)
