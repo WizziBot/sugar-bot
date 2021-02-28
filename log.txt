@@ -79,3 +79,6 @@ Member Badbird5907#9611 Joined ::: Sat Feb 27 2021 21:40:52 GMT+0000 (Greenwich 
 Created profile for user Badbird5907#9611 ::: Sat Feb 27 2021 21:40:52 GMT+0000 (Greenwich Mean Time)
 [Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [sugarlegions] ::: Sat Feb 27 2021 23:27:06 GMT+0000 (Greenwich Mean Time)
 CREATED GUILD CONFIG FOR [Sugar 'Caine Abusers BETA] ::: Sun Feb 28 2021 00:11:59 GMT+0000 (Greenwich Mean Time)
+[Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [ping] ::: Sun Feb 28 2021 00:14:23 GMT+0000 (Greenwich Mean Time)
+[Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [ping] ::: Sun Feb 28 2021 00:18:05 GMT+0000 (Greenwich Mean Time)
+[Sugar 'Caine Abusers BETA] USER [Shi#0300] : [3] EXECUTED [r] ::: Sun Feb 28 2021 00:18:07 GMT+0000 (Greenwich Mean Time)
