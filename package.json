@@ -12,6 +12,7 @@
     "discord.js": "^12.5.1",
     "minecraft-data": "^2.75.0",
     "mysql2": "^2.2.5",
-    "sequelize": "^6.5.0"
+    "sequelize": "^6.5.0",
+    "sqlite3": "^5.0.2"
   }
 }
