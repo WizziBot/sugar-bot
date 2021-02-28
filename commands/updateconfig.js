@@ -2,7 +2,7 @@ module.exports = {
     name: 'updateconfig',
     accessLevel: 3,
     description: "Updates the guild configuration.",
-    async execute(cmdLog,message,guildsdata,filterUserId){
+    async execute(cmdLog,message,guildsdata,filterUserId,adminChatInit){
         try{
             let guildDataAccumulator = {
                 trusted:null,
@@ -59,6 +59,7 @@ module.exports = {
                                                     config: JSON.stringify(guildDataAccumulator)
                                                 }, { where: { guild_id: message.guild.id } });
                                                 cmdLog(`UPDATED GUILD CONFIG FOR [${message.guild.name}]`)
+                                                adminChatInit()
                                             } catch(e){
                                                 console.trace(e)
                                                 currMessage.channel.send(`UNKNOWN ERROR.`)

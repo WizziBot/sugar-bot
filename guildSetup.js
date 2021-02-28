@@ -1,7 +1,7 @@
 module.exports = {
     name: 'setup',
     description: "Sets up the guild configuration.",
-    async execute(cmdLog,message,guildsdata,filterUserId){
+    async execute(cmdLog,message,guildsdata,filterUserId,adminChatInit){
         try{
             let guildDataAccumulator = {
                 trusted:null,
@@ -61,6 +61,7 @@ module.exports = {
                                                     config: JSON.stringify(guildDataAccumulator)
                                                 });
                                                 cmdLog(`CREATED GUILD CONFIG FOR [${message.guild.name}]`)
+                                                adminChatInit()
                                             } catch(e){
                                                 console.trace(e)
                                                 currMessage.channel.send(`UNKNOWN ERROR.`)

@@ -141,11 +141,13 @@ function getUserInfo(member,gConfig){
     return tempUserInfo
 }
 function filterUserId(user_ping){
-    let user_id = user_ping.slice('2','-1');
-    if(user_id.startsWith('!') || user_id.startsWith('&')){
-        user_id = user_id.slice('1');
+    if(user_ping.startsWith('<')){
+        let user_id = user_ping.slice('2','-1');
+        if(user_id.startsWith('!') || user_id.startsWith('&')){
+            user_id = user_id.slice('1');
+        }
     }
-    return user_id;
+    return user_ping;
 }
 function grantFullControl(fcu){
     fullControl.push(fcu)
@@ -168,7 +170,16 @@ function idToName(id,guild){
         return id
     }
 }
+function nameToId(name,guild){
+    try{
+        let uName = guild.members.cache.find(id_c => id_c == id).user.tag;
+        return uName
+    } catch(e) {
+        return 'No Results.'
+    }
+}
 async function adminChatInit(){
+    adminChatChannels = new Map()
     const allGuilds = await guildsdata.findAll();
     for (i = 0; i < allGuilds.length; i++){
         try{
@@ -180,6 +191,10 @@ async function adminChatInit(){
     }
 }
 function acRelay(message){
+    let attachments = []
+    message.attachments.forEach(at => {
+        attachments.push(at.url)
+    });
     adminChatChannels.forEach(async (cid,gid) => {
         try{
             const acChannel = client.guilds.cache.get(gid).channels.cache.get(cid)
@@ -190,17 +205,19 @@ function acRelay(message){
                         avatar: 'https://i.imgur.com/wSTFkRM.png',
                     }).then(webhook => {
                         webhook.send({
-                            username: message.member.displayName,
+                            username: `[${message.guild.name}] ${message.member.displayName}`,
                             avatarURL: message.author.avatarURL(),
                             content: message.content,
+                            files: attachments
                         });
                     })
                 } else {
                     const webhook = webhooks.first();
                     await webhook.send({
-                        username: message.author.username,
+                        username: `[${message.guild.name}] ${message.member.displayName}`,
                         avatarURL: message.author.avatarURL(),
                         content: message.content,
+                        files: attachments
                     });
                 }
             }
@@ -302,7 +319,7 @@ client.on('message',async message => {
         } else {
             cmdAccessLevel = 0;
         }
-        if (command === 'forcejoin' || command === 'forcejoinall'){
+        if (command === 'forcejoin' || command === 'forcejoinall' || command === 'updateconfig'){
             cmdAccessLevel = 4;
         }
         if (userInfo.accessLevel < cmdAccessLevel) {
@@ -338,7 +355,7 @@ client.on('message',async message => {
                 }
             })
         } else if (command === 'admin'){
-            client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl);
+            client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl,adminChatInit);
         } else if (command === 'profile'){
             //
         } else if (command === 'removeprofile'){
@@ -360,6 +377,9 @@ client.on('message',async message => {
         } else if (command === 'idtoname') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.reply(idToName(commandArgs,message.guild));
+        } else if (command === 'nametoid') {
+            cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
+            message.reply(nameToId(commandArgs,message.member));
         } else if (command === 'r') {
             client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData,userInfo);
         } else if (command === 'rold') {
@@ -369,11 +389,7 @@ client.on('message',async message => {
         } else if (command === 'sugarlegions'){
             client.commands.get(command).execute(message);
         } else if (command === 'updateconfig'){
-            if(message.member.hasPermission('ADMINISTRATOR')){
-                client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId);
-            } else {
-                message.reply('Only an administrator can perform this.')
-            }
+            client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId,adminChatInit);
         } else if (command === 'plogs'){
             //
         } else if (command === 't'){
