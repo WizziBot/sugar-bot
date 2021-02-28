@@ -322,4 +322,4 @@ client.on('message',async message => {
     }
 });
 
-client.login(process.env.token);
+client.login('ODA4MDQzODg4MzA4MjU2Nzc4.YCAzgw.XAFFQPFtM85i8A2YQpZ9X1e4C18');
