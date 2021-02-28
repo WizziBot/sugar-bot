@@ -9,6 +9,7 @@ module.exports = {
             let ea = [];
             if(!raid_name){
                 message.channel.send('Syntax: `##startraid name`');
+                return
             }
             //gets a random id for the raid
             let randomRaidId;

@@ -205,7 +205,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
     if (!user.bot) {
-        if (reaction.emoji.name === '\u2705' && reaction.message.id === '814811061693448213') { //if the user reacted with the right emoji
+        if (reaction.emoji.name === '\u2705' && reaction.message.id === '815572072478146561') { //if the user reacted with the right emoji
             const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
 
             const { guild } = reaction.message; //store the guild of the reaction in variable
