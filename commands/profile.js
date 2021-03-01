@@ -10,7 +10,7 @@ module.exports = {
             const profile = await profiles.findOne({ where: { user_id: user_id } });
             if (profile) {
                 //gets all the lecturer info and parses the stringified data
-                const raid_history = JSON.parse(profile.topic_history);
+                const raid_history = JSON.parse(profile.raid_history);
                 const additional_notes = JSON.parse(profile.additional_notes);
 
                 const user_data =  client.users.cache.get(user_id);

@@ -284,6 +284,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 client.on('message',async message => {
     try{
         if(message.author.bot) return;
+        //checks if admin chat msg
         const adminChatChannel = adminChatChannels.get(message.guild.id)
         if(adminChatChannel === message.channel.id){
             acRelay(message)
@@ -335,7 +336,7 @@ client.on('message',async message => {
         //Commands
         if (command === 'ping'){
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
-            message.channel.send(`Latency is \`${message.createdTimestamp - Date.now()}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
+            message.channel.send(`Latency is \`${Date.now() - message.createdTimestamp}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
         } else if (command === 'help'){
             client.commands.get(command).execute(message,client,commandArgs,userInfo)
         } else if(command === 'forcejoin'){
