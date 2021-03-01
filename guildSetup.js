@@ -22,6 +22,7 @@ module.exports = {
                     .then(currMessage => {
                         currMessage = currMessage.first()
                         currMessage.delete({timeout:0})
+                        console.log(currMessage.content)
                         const ch_id = filterUserId(currMessage.content)
                         const adminC = message.guild.channels.cache.find(r => r.id == ch_id)
                         if(adminC){

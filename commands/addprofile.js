@@ -1,6 +1,8 @@
 module.exports = {
     name: 'addprofile',
     accessLevel:4,
+    description:"no",
+    syntax:"no",
     async execute(cmdLog,config,member,profiles){
         try {
             const ifexists = await profiles.findOne({ where: { user_id: member.id } })

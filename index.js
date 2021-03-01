@@ -132,7 +132,7 @@ function getUserInfo(member,gConfig){
     }
     if(member.roles.cache.find(role => role.id === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1; tempUserInfo.prefix = '[T]'}
     if(member.roles.cache.find(role => role.id === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2; tempUserInfo.prefix = '[P]'}
-    if(member.roles.cache.find(role => role.id === gConfig.moderator)){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]'}
+    if(member.roles.cache.find(role => role.id === gConfig.moderator) || member.hasPermission('ADMINISTRATOR')){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]'}
     for(i = 0; i < fullControl.length; i++){
         if (member.id === fullControl[i]){
             tempUserInfo.accessLevel = 4
@@ -141,13 +141,14 @@ function getUserInfo(member,gConfig){
     return tempUserInfo
 }
 function filterUserId(user_ping){
-    if(user_ping.startsWith('<')){
+    if(user_ping.endsWith('>')){
         let user_id = user_ping.slice('2','-1');
-        if(user_id.startsWith('!') || user_id.startsWith('&')){
+        if(user_id.startsWith('!') || user_id.startsWith('&') || user_id.startsWith('#')){
             user_id = user_id.slice('1');
         }
+        return user_id;   
     }
-    return user_ping;
+    return user_ping
 }
 function grantFullControl(fcu){
     fullControl.push(fcu)
@@ -300,7 +301,7 @@ client.on('message',async message => {
         if(!gDataRaw){
             if(command === 'setup'){
                 if(message.member.hasPermission('ADMINISTRATOR')){
-                    guildSetup.execute(cmdLog,message,guildsdata,filterUserId)
+                    guildSetup.execute(cmdLog,message,guildsdata,filterUserId,adminChatInit)
                 } else {
                     message.reply('Only an administrator can perform this.')
                 }
@@ -320,7 +321,12 @@ client.on('message',async message => {
             cmdAccessLevel = 0;
         }
         if (command === 'forcejoin' || command === 'forcejoinall' || command === 'updateconfig'){
-            cmdAccessLevel = 4;
+            if(message.member.hasPermission('ADMINISTRATOR')){
+                cmdAccessLevel = 3;
+            } else {
+                cmdAccessLevel = 4;
+            }
+            
         }
         if (userInfo.accessLevel < cmdAccessLevel) {
             message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
