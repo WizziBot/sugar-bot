@@ -51,7 +51,7 @@ const storedRecData = sequelize.define('storedrecdata', {
         allowNull: false
 	},
     author: {
-        type: Sequelize.STRING(20),
+        type: Sequelize.STRING(30),
         allowNull: false
     },
     data: {
@@ -114,6 +114,8 @@ const profiles = sequelize.define('profiles', {
 //VOLATILE GLOBAL VARIABLE INITIALIZATION
 let fullControl = []
 let adminChatChannels = new Map()
+let no = ['raid','client','crash','hack']
+let noch = ['815314577171546122']
 //DISCORD BOT
 //collect commands from command folder
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -284,6 +286,17 @@ client.on('messageReactionAdd', async (reaction, user) => {
 client.on('message',async message => {
     try{
         if(message.author.bot) return;
+        for(o = 0; o < noch.length; o++){
+            if (message.channel.id === noch[o]){
+                for (oi = 0; oi < no.length; oi++){
+                    if(message.content.toLowerCase().includes(no[oi])){
+                        message.reply('Don\'t talk about Raid Shadow Legends sus.').then(msg => {msg.delete({timeout:2000})})
+                        message.delete({timeout:0})
+                        return
+                    }
+                }
+            }
+        }
         //checks if admin chat msg
         const adminChatChannel = adminChatChannels.get(message.guild.id)
         if(adminChatChannel === message.channel.id){
