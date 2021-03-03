@@ -112,7 +112,7 @@ const profiles = sequelize.define('profiles', {
     }
 });
 //VOLATILE GLOBAL VARIABLE INITIALIZATION
-let fullControl = []
+let fullControl = ['372325472811352065']
 let adminChatChannels = new Map()
 let no = ['raid','client','crash','hack']
 let noch = ['815314577171546122']
@@ -256,9 +256,13 @@ client.on('guildMemberAdd', async member => {
     }
 });
 
-client.on("guildMemberRemove", member => {
+client.on("guildMemberRemove", async member => {
     if(member.user.bot){return}
     cmdLog(`Member ${member.user.tag} Left`);
+    const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
+    if(gData){
+        client.commands.get('removeprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
+    }
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
@@ -295,6 +299,7 @@ client.on('message',async message => {
                         return
                     }
                 }
+                return
             }
         }
         //checks if admin chat msg
@@ -334,7 +339,7 @@ client.on('message',async message => {
         } else {
             cmdAccessLevel = 0;
         }
-        if (command === 'forcejoin' || command === 'forcejoinall' || command === 'updateconfig'){
+        if (command === 'forcejoin' || command === 'forceleave' || command === 'forcejoinall' || command === 'updateconfig'){
             if(message.member.hasPermission('ADMINISTRATOR')){
                 cmdAccessLevel = 3;
             } else {
@@ -364,6 +369,18 @@ client.on('message',async message => {
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
             }
+        } else if(command === 'forceleave'){
+            cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
+            try{
+                const user_id = filterUserId(commandArgs)
+                const forcejoin = message.guild.members.cache.get(user_id);
+                if(forcejoin){
+                    client.emit('guildMemberRemove', forcejoin);
+                }
+            } catch(e){
+                console.trace(e)
+                cmdLog('Error while trying to forcejoin a user.')
+            }
         } else if(command === 'forcejoinall'){
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.guild.members.cache.forEach(mbr => {
@@ -379,11 +396,13 @@ client.on('message',async message => {
         } else if (command === 'profile'){
             //client.commands.get(command).execute(message,client,commandArgs,profiles,filterUserId);
         } else if (command === 'removeprofile'){
-            client.commands.get(command).execute(message.member,profiles);
+            client.commands.get(command).execute(gData,message.guild.members.cache.get(commandArgs),profiles);
         } else if (command === 'recipe'){
             client.commands.get(command).execute(message,commandArgs);
         } else if (command === 'forceaddraid'){
             client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName);
+        } else if (command === 'addnote'){
+            client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,filterUserId,idToName);
         } else if (command === 'getlog'){
             client.commands.get(command).execute(message)
         } else if (command === 'startraid'){

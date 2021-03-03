@@ -16,14 +16,12 @@ module.exports = {
                 const user_data =  client.users.cache.get(user_id);
                 let profileEmbed = {
                     color: 0x00ff00,
-                    title: user_data.tag,
-                    fields: [],
-                    timestamp: new Date(),
-                };
-                const guildsEmbed = {
-                    color: 0x00ff00,
-                    title: 'Sugar Guilds',
-                    description: gNames,
+                    title: 'Raid Profile',
+                    author: {
+                        name: user_data.tag,
+                        icon_url: user_data.avatarURL(),
+                    },
+                    fields: [raid_history,additional_notes],
                     timestamp: new Date(),
                 };
                 message.channel.send({ embed: profileEmbed });

@@ -21,23 +21,25 @@ module.exports = {
                     for(let i = 0; i < allprofiles.length; i++){
                         const currId = allprofiles[i].dataValues.user_id;
                         const membData = message.guild.members.cache.find(dId => dId == currId);
-                        if(getUserInfo(membData,gData).participant){
-                            participants.push(membData.user.tag);
-                            let found = JSON.parse(allprofiles[i].dataValues.raid_history)
-                            if(found.length === 0){
-                                let appendObj = {
-                                    id: raidToDoc.raid_id,
-                                    name: raidToDoc.name
-                                };
-                                let newprof = [appendObj];
-                                await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
-                            } else {
-                                let appendObj = {
-                                    id: raidToDoc.raid_id,
-                                    name: raidToDoc.name
-                                };
-                                let newprof = [appendObj,...found];
-                                await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
+                        if (membData){
+                            if(getUserInfo(membData,gData).participant){
+                                participants.push(membData.user.tag);
+                                let found = JSON.parse(allprofiles[i].dataValues.raid_history)
+                                if(found.length === 0){
+                                    let appendObj = {
+                                        id: raidToDoc.raid_id,
+                                        name: raidToDoc.name
+                                    };
+                                    let newprof = [appendObj];
+                                    await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
+                                } else {
+                                    let appendObj = {
+                                        id: raidToDoc.raid_id,
+                                        name: raidToDoc.name
+                                    };
+                                    let newprof = [appendObj,...found];
+                                    await profiles.update({ raid_history: JSON.stringify(newprof)}, { where: { user_id: currId } });
+                                }
                             }
                         }
                     }

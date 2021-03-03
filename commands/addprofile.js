@@ -19,6 +19,7 @@ module.exports = {
                     additional_notes: JSON.stringify(an),
                     sugar_guilds: JSON.stringify(gl)
                 });
+                member.guild.channels.cache.find(ch => ch.id === config.admin_channel).send(`Successfully created new profile for \`${member.user.tag}\`.`);
                 cmdLog(`Created profile for user ${member.user.tag}`)
             } else {
                 let inguilds = JSON.parse(ifexists.sugar_guilds)
