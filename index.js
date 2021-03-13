@@ -36,6 +36,10 @@ const currentRaids = sequelize.define('currentraids', {
         type: Sequelize.STRING(20),
         allowNull: false
     },
+    ip: {
+        type: Sequelize.STRING(30),
+        allowNull: true
+    },
     guild_id: {
         type: Sequelize.STRING(18),
         allowNull: false
@@ -71,6 +75,10 @@ const raids = sequelize.define('raids', {
     name: {
         type: Sequelize.STRING(20),
         allowNull: false
+    },
+    ip: {
+        type: Sequelize.STRING(30),
+        allowNull: true
     },
     guild_id: {
         type: Sequelize.STRING(18),
@@ -114,8 +122,8 @@ const profiles = sequelize.define('profiles', {
 //VOLATILE GLOBAL VARIABLE INITIALIZATION
 let fullControl = ['372325472811352065']
 let adminChatChannels = new Map()
-let no = ['raid','client','crash','hack']
-let noch = ['815314577171546122']
+let no = ['raid','client','crash','hack','ddos']
+let noch = ['815314577171546122','807368580697292831','803517958139019274']
 //DISCORD BOT
 //collect commands from command folder
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -173,14 +181,14 @@ function idToName(id,guild){
         return id
     }
 }
-function nameToId(name,guild){
-    try{
-        let uName = guild.members.cache.find(id_c => id_c == id).user.tag;
-        return uName
-    } catch(e) {
-        return 'No Results.'
-    }
-}
+// function nameToId(name,guild){
+//     try{
+//         let uName = guild.members.cache.find(id_c => id_c == id).user.tag;
+//         return uName
+//     } catch(e) {
+//         return 'No Results.'
+//     }
+// }
 async function adminChatInit(){
     adminChatChannels = new Map()
     const allGuilds = await guildsdata.findAll();
@@ -208,7 +216,7 @@ function acRelay(message){
                         avatar: 'https://i.imgur.com/wSTFkRM.png',
                     }).then(webhook => {
                         webhook.send({
-                            username: `[${message.guild.name}] ${message.member.displayName}`,
+                            username: `[${message.guild.name}] ${message.member.user.username}`,
                             avatarURL: message.author.avatarURL(),
                             content: message.content,
                             files: attachments
@@ -249,7 +257,6 @@ client.on("guildCreate", guild => {
 
 client.on('guildMemberAdd', async member => {
     if(member.user.bot){return}
-    cmdLog(`Member ${member.user.tag} Joined`);
     const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
     if(gData){
         client.commands.get('addprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
@@ -258,7 +265,6 @@ client.on('guildMemberAdd', async member => {
 
 client.on("guildMemberRemove", async member => {
     if(member.user.bot){return}
-    cmdLog(`Member ${member.user.tag} Left`);
     const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
     if(gData){
         client.commands.get('removeprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
@@ -394,7 +400,7 @@ client.on('message',async message => {
         } else if (command === 'admin'){
             client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl,adminChatInit);
         } else if (command === 'profile'){
-            //client.commands.get(command).execute(message,client,commandArgs,profiles,filterUserId);
+            client.commands.get(command).execute(message,client,commandArgs,profiles,filterUserId);
         } else if (command === 'removeprofile'){
             client.commands.get(command).execute(gData,message.guild.members.cache.get(commandArgs),profiles);
         } else if (command === 'recipe'){

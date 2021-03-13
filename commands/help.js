@@ -32,7 +32,7 @@ module.exports = {
                 });
                 const helpEmbed = {
                     color: 0x00ff99,
-                    title: 'Commands',
+                    title: 'Commands (available to you)',
                     description: gNames,
                     timestamp: new Date(),
                 };

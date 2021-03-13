@@ -9,7 +9,7 @@ module.exports = {
             const eRaidId = splitArgs.shift();
             const pUpdate = splitArgs.join(' ');
             if(!eRaidId || !pUpdate){
-                console.log('Syntax: `##progress raid_id progress_update`');
+                message.channel.send('Syntax: `##progress raid_id progress_update`');
                 return
             }
             //grabs data

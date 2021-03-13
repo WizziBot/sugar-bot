@@ -1,7 +1,7 @@
 module.exports = {
     name: 'documentraid',
     accessLevel:3,
-    description: "Takes the current raid and formats it for long term storage.",
+    description: "Takes the current raid and formats it for long term storage. Also automatically adds the raid to the history of all members with the Raid Participant role",
     syntax:"##documentraid raid_id [description]",
     async execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData,al){
         try{

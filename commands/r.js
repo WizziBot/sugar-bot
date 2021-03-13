@@ -28,24 +28,27 @@ module.exports = {
                                 gName = g.name
                             }
                         })
+                        let rEmbed = {
+                            color: 0x00ff00,
+                            title: raidsData[i].dataValues.name,
+                            description: `Raid ID: ${raidsData[i].dataValues.raid_id}\nServer IP: ${raidsData[i].dataValues.ip}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\n**Past 5 information logs:**`,
+                            fields:[],
+                            timestamp: new Date(),
+                        };
                         let jparsed = await storedRecData.findAll({ where: { raid_id: raidsData[i].dataValues.raid_id } });
-                        let parsedRecorded = '';
                         if (jparsed.length !== 0){
                             for(u = 0; u < 5; u++){
                                 const curjp = jparsed[jparsed.length - 1 - u]
                                 if (curjp){
                                     let d = curjp.dataValues.date
-                                    parsedRecorded = `${parsedRecorded}${curjp.dataValues.author} : ${curjp.dataValues.data} (${d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear()})\n`;
+                                    rEmbed.fields.push({
+                                        name:curjp.dataValues.author,
+                                        value:`${curjp.dataValues.data} (${d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear()})`
+                                    })
                                 }
                             }
                         }
-                        let rEmbed = {
-                            color: 0x00ff00,
-                            title: raidsData[i].dataValues.name,
-                            description: `-----------------------\nRaid ID: ${raidsData[i].dataValues.raid_id}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nPast 5 information logs:\n${parsedRecorded}-----------------------`,
-                            timestamp: new Date(),
-                        };
-                        message.channel.send({embed:rEmbed})                
+                        message.channel.send({embed:rEmbed})    
                     }
                 }
             } else {

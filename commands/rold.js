@@ -25,7 +25,14 @@ module.exports = {
                     //         }
                     //     }
                     // }
-                    message.channel.send(`-----------------------\nName: ${raidsData[i].dataValues.name}\nRaid ID: ${raidsData[i].dataValues.raid_id}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nEnd Date: ${raidsData[i].dataValues.end_date}\nName: ${raidsData[i].dataValues.description}\n-----------------------`)
+                    let rEmbed = {
+                        color: 0x00ff00,
+                        title: raidsData[i].dataValues.name,
+                        description: `Raid ID: ${raidsData[i].dataValues.raid_id}\nServer IP: ${raidsData[i].dataValues.ip}\nSublegion: ${gName}\nStart Date: ${raidsData[i].dataValues.start_date}\nEnd Date: ${raidsData[i].dataValues.end_date}\nDescription: ${raidsData[i].dataValues.description}`,
+                        fields:[],
+                        timestamp: new Date(),
+                    };
+                    message.channel.send({embed:rEmbed})
                 }
             } else {
                 message.channel.send(`Raid history is empty.`)

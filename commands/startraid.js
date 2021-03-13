@@ -2,13 +2,15 @@ module.exports = {
     name: 'startraid',
     accessLevel:3,
     description: "Starts a new raid to begin recording activity.",
-    syntax:"##startraid name",
+    syntax:"##startraid name server_ip",
     async execute(cmdLog,gData,message,commandArgs,raids,raidsold){
         try{
-            const raid_name = commandArgs;
+            const splitArgs = commandArgs.split(' ');
+            const raid_name = splitArgs.shift();
+            const raid_ip = splitArgs.join(' ');
             let ea = [];
-            if(!raid_name){
-                message.channel.send('Syntax: `##startraid name`');
+            if(!raid_name || !raid_ip){
+                message.channel.send('Syntax: `##startraid name server_ip`');
                 return
             }
             //gets a random id for the raid
@@ -24,6 +26,7 @@ module.exports = {
             raids.create({
                 raid_id: randomRaidId,
                 name: raid_name,
+                ip: raid_ip,
                 guild_id:message.guild.id,
                 start_date: new Date(),
                 recorded_data: JSON.stringify(ea)
@@ -33,7 +36,7 @@ module.exports = {
             cmdLog(`Started Raid ${raid_name}.`);
         } catch(e){
             console.trace(e)
-            message.channel.send('Unknown Error. Please use the correct syntax: `##startraid name`');
+            message.channel.send('Unknown Error. Please use the correct syntax: `##startraid name server_ip`');
         }
     }
 }
