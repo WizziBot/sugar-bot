@@ -47,6 +47,7 @@ module.exports = {
                     await raids.create({
                         raid_id: newraid_id,
                         name: raidToDoc.name,
+                        ip: raidToDoc.ip,
                         guild_id: raidToDoc.guild_id,
                         start_date: raidToDoc.start_date,
                         end_date: new Date(),

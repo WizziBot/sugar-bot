@@ -3,7 +3,7 @@ module.exports = {
     accessLevel: 3,
     syntax:"##updateconfig",
     description: "Updates the guild configuration with skippable options as to not have to ping all the roles.",
-    async execute(cmdLog,message,guildsdata,filterUserId,adminChatInit){
+    async execute(cmdLog,message,guildsdata,filterUserId,filterRoleId,adminChatInit){
         try{
             const thisGdata = await guildsdata.findOne({ where: { guild_id: message.guild.id } })
             const thisParsedData = JSON.parse(thisGdata.config)
@@ -28,7 +28,7 @@ module.exports = {
                         currMessage = currMessage.first()
                         if(currMessage.content === 'cancel') return;
                         currMessage.delete({timeout:0})
-                        const ch_id = filterUserId(currMessage.content)
+                        const ch_id = filterUserId(currMessage.content,message)
                         const adminC = message.guild.channels.cache.find(r => r.id == ch_id)
                         let aName;
                         if(adminC){
@@ -48,7 +48,7 @@ module.exports = {
                             currMessage = currMessage.first()
                             if(currMessage.content === 'cancel') return;
                             currMessage.delete({timeout:0})
-                            const ch_id = filterUserId(currMessage.content)
+                            const ch_id = filterUserId(currMessage.content,message)
                             const annC = message.guild.channels.cache.find(r => r.id == ch_id)
                             let annName;
                             if(annC){
@@ -68,7 +68,7 @@ module.exports = {
                                 currMessage = currMessage.first()
                                 if(currMessage.content === 'cancel') return;
                                 currMessage.delete({timeout:0})
-                                const ch_id = filterUserId(currMessage.content)
+                                const ch_id = filterUserId(currMessage.content,message)
                                 const acC = message.guild.channels.cache.find(r => r.id == ch_id)
                                 let acName;
                                 if(acC){
@@ -117,7 +117,7 @@ module.exports = {
                     currMessage = currMessage.first()
                     if(currMessage.content === 'cancel') return;
                     currMessage.delete({timeout:0})
-                    const role_id = filterUserId(currMessage.content)
+                    const role_id = filterRoleId(currMessage.content,message)
                     const trustedR = message.guild.roles.cache.find(r => r.id == role_id)
                     let tName;
                     if(trustedR){
@@ -137,7 +137,7 @@ module.exports = {
                         currMessage = currMessage.first()
                         if(currMessage.content === 'cancel') return;
                         currMessage.delete({timeout:0})
-                        const role_id = filterUserId(currMessage.content)
+                        const role_id = filterRoleId(currMessage.content,message)
                         const participantR = message.guild.roles.cache.find(r => r.id == role_id)
                         let pName;
                         if(participantR){
@@ -157,7 +157,7 @@ module.exports = {
                             currMessage = currMessage.first()
                             if(currMessage.content === 'cancel') return;
                             currMessage.delete({timeout:0})
-                            const role_id = filterUserId(currMessage.content)
+                            const role_id = filterRoleId(currMessage.content,message)
                             const modR = message.guild.roles.cache.find(r => r.id == role_id)
                             let mName;
                             if(modR){

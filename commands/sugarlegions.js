@@ -7,8 +7,10 @@ module.exports = {
             let gNames = '';
             let counter = 1;
             message.client.guilds.cache.forEach(g => {
-                gNames = `${gNames}[${counter}] \`${g.name}\`\n`
-                counter++
+                if (g.name != 'Sugar test'){
+                    gNames = `${gNames}[${counter}] \`${g.name}\`\n`
+                    counter++
+                }
             })
             const guildsEmbed = {
                 color: 0x00ff00,

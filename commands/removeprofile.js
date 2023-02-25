@@ -29,8 +29,8 @@ module.exports = {
                         } catch (e){
                             console.trace(e)
                         }
-                    },300000)
-                    member.guild.channels.cache.find(ch => ch.id === config.admin_channel).send(`User \`${member.user.tag}\` left all Sugarlegions and their profile will be deleted in 5 minutes unless they return.`);
+                    },1800000)
+                    member.guild.channels.cache.find(ch => ch.id === config.admin_channel).send(`User \`${member.user.tag}\` left all Sugarlegions and their profile will be deleted in 30 minutes unless they return.`);
                     cmdLog(`User ${member.user.tag} left all Sugarlegions.`)
                 } else {
                     profiles.update({ sugar_guilds: JSON.stringify(inguilds)}, { where: { user_id: member.id } });

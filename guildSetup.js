@@ -1,7 +1,7 @@
 module.exports = {
     name: 'setup',
     description: "Sets up the guild configuration.",
-    async execute(cmdLog,message,guildsdata,filterUserId,adminChatInit){
+    async execute(cmdLog,message,guildsdata,filterUserId,filterRoleId,adminChatInit){
         try{
             let guildDataAccumulator = {
                 trusted:null,
@@ -103,7 +103,7 @@ module.exports = {
                 .then(currMessage => {
                     currMessage = currMessage.first()
                     currMessage.delete({timeout:0})
-                    const role_id = filterUserId(currMessage.content)
+                    const role_id = filterRoleId(currMessage.content)
                     const trustedR = message.guild.roles.cache.find(r => r.id == role_id)
                     if(trustedR){
                         guildDataAccumulator.trusted = trustedR.id
@@ -116,7 +116,7 @@ module.exports = {
                         .then(currMessage => {
                             currMessage = currMessage.first()
                             currMessage.delete({timeout:0})
-                            const role_id = filterUserId(currMessage.content)
+                            const role_id = filterRoleId(currMessage.content)
                             const participantR = message.guild.roles.cache.find(r => r.id == role_id)
                             if(participantR){
                                 guildDataAccumulator.raid_participant = participantR.id
@@ -129,7 +129,7 @@ module.exports = {
                                 .then(currMessage => {
                                     currMessage = currMessage.first()
                                     currMessage.delete({timeout:0})
-                                    const role_id = filterUserId(currMessage.content)
+                                    const role_id = filterRoleId(currMessage.content)
                                     const modR = message.guild.roles.cache.find(r => r.id == role_id)
                                     if(modR){
                                         guildDataAccumulator.moderator = modR.id

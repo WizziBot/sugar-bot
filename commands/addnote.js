@@ -6,7 +6,7 @@ module.exports = {
     async execute(cmdLog,message,commandArgs,profiles,filterUserId,idToName){
         try{
             const splitArgs = commandArgs.split(' ');
-            const user_id = filterUserId(splitArgs.shift());
+            const user_id = filterUserId(splitArgs.shift(),message);
             const note = splitArgs.join(' ');
             
             //fetches profile

@@ -6,7 +6,7 @@ module.exports = {
     async execute(message,client,commandArgs,profiles,filterUserId){
         try{
             const splitArgs = commandArgs.split(' ');
-            const user_id = filterUserId(splitArgs.shift());
+            const user_id = filterUserId(splitArgs.shift(),message);
             if (!user_id){
                 message.channel.send('Syntax: `##profile user [history/notes] (info_count)`')
                 return

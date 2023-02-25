@@ -1,26 +1,28 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const Sequelize = require('sequelize')
+const Op = Sequelize.Op;
 const fs = require('fs');
 client.commands = new Discord.Collection();
 const pkg = require('./package.json')
 const config = require('./sugar.json')
 const guildSetup = require('./guildSetup');
+const token = require('./token.json').token;
 //DATABASES INITIALIZATION
 
 const sequelize = new Sequelize('sugar', 'root', 'Password...5', {
-	host: 'localhost',
-	dialect: 'mysql',
+    host: 'localhost',
+    dialect: 'mysql',
     logging: false
 });
 const guildsdata = sequelize.define('guildsdata', {
-	guild_id: {
-		type: Sequelize.STRING(18),
-		unique: true
-	},
-	raid_history: {
-		type: Sequelize.TEXT,
-		allowNull: true
+    guild_id: {
+        type: Sequelize.STRING(18),
+        unique: true
+    },
+    raid_history: {
+        type: Sequelize.TEXT,
+        allowNull: true
     },
     config: {
         type: Sequelize.TEXT,
@@ -28,10 +30,10 @@ const guildsdata = sequelize.define('guildsdata', {
     }
 });
 const currentRaids = sequelize.define('currentraids', {
-	raid_id: {
-		type: Sequelize.STRING(4),
+    raid_id: {
+        type: Sequelize.STRING(4),
         unique: true
-	},
+    },
     name: {
         type: Sequelize.STRING(20),
         allowNull: false
@@ -44,16 +46,16 @@ const currentRaids = sequelize.define('currentraids', {
         type: Sequelize.STRING(18),
         allowNull: false
     },
-	start_date: {
-		type: Sequelize.DATE,
-		allowNull: false
+    start_date: {
+        type: Sequelize.DATE,
+        allowNull: false
     },
 });
 const storedRecData = sequelize.define('storedrecdata', {
-	raid_id: {
-		type: Sequelize.STRING(4),
+    raid_id: {
+        type: Sequelize.STRING(4),
         allowNull: false
-	},
+    },
     author: {
         type: Sequelize.STRING(30),
         allowNull: false
@@ -62,16 +64,16 @@ const storedRecData = sequelize.define('storedrecdata', {
         type: Sequelize.STRING(1000),
         allowNull: false
     },
-    date : {
+    date: {
         type: Sequelize.DATE,
         allowNull: false
     }
 });
 const raids = sequelize.define('raids', {
-	raid_id: {
-		type: Sequelize.STRING(4),
+    raid_id: {
+        type: Sequelize.STRING(4),
         unique: true
-	},
+    },
     name: {
         type: Sequelize.STRING(20),
         allowNull: false
@@ -84,9 +86,9 @@ const raids = sequelize.define('raids', {
         type: Sequelize.STRING(18),
         allowNull: false
     },
-	start_date: {
-		type: Sequelize.DATE,
-		allowNull: false
+    start_date: {
+        type: Sequelize.DATE,
+        allowNull: false
     },
     end_date: {
         type: Sequelize.DATE,
@@ -94,21 +96,21 @@ const raids = sequelize.define('raids', {
     },
     description: {
         type: Sequelize.STRING(2000),
-        allowNull:true
+        allowNull: true
     },
     participants: {
         type: Sequelize.TEXT,
-        allowNull:true
+        allowNull: true
     },
 });
 const profiles = sequelize.define('profiles', {
-	user_id: {
-		type: Sequelize.STRING(18),
+    user_id: {
+        type: Sequelize.STRING(18),
         unique: true
-	},
-	raid_history: {
-		type: Sequelize.TEXT,
-		allowNull: true
+    },
+    raid_history: {
+        type: Sequelize.TEXT,
+        allowNull: true
     },
     additional_notes: {
         type: Sequelize.TEXT,
@@ -119,65 +121,118 @@ const profiles = sequelize.define('profiles', {
         allowNull: false
     }
 });
+const rolereactions = sequelize.define('rolereactions', {
+    role: {
+        type: Sequelize.STRING(18),
+        allowNull: false
+    },
+    messageID: {
+        type: Sequelize.STRING(18),
+        allowNull: false
+    },
+    emojiName: {
+        type: Sequelize.STRING(20),
+        allowNull: false
+    },
+    isGuildEmoji: {
+        type: Sequelize.BOOLEAN
+    }
+}, {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_unicode_ci'
+});
 //VOLATILE GLOBAL VARIABLE INITIALIZATION
 let fullControl = ['372325472811352065']
 let adminChatChannels = new Map()
-let no = ['raid','client','crash','hack','ddos']
-let noch = ['815314577171546122','807368580697292831','803517958139019274']
+let no = ['raid', 'client', 'crash', 'hack', 'ddos', 'lagg', 'lag machine']
+let noch = ['815314577171546122', '807368580697292831', '803517958139019274']
 //DISCORD BOT
 //collect commands from command folder
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
-for(const file of commandFiles){
+for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 }
 //functions
-function getUserInfo(member,gConfig){
+function getUserInfo(member, gConfig) {
     let tempUserInfo = {
         trusted: false,
         participant: false,
         moderator: false,
         accessLevel: 0,
-        prefix:''
+        prefix: ''
     }
-    if(member.roles.cache.find(role => role.id === gConfig.trusted)){tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1; tempUserInfo.prefix = '[T]'}
-    if(member.roles.cache.find(role => role.id === gConfig.raid_participant)){tempUserInfo.participant = true; tempUserInfo.accessLevel = 2; tempUserInfo.prefix = '[P]'}
-    if(member.roles.cache.find(role => role.id === gConfig.moderator) || member.hasPermission('ADMINISTRATOR')){tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]'}
-    for(i = 0; i < fullControl.length; i++){
-        if (member.id === fullControl[i]){
+    if (member.roles.cache.find(role => role.id === gConfig.trusted)) { tempUserInfo.trusted = true; tempUserInfo.accessLevel = 1; tempUserInfo.prefix = '[T]' }
+    if (member.roles.cache.find(role => role.id === gConfig.raid_participant)) { tempUserInfo.participant = true; tempUserInfo.accessLevel = 2; tempUserInfo.prefix = '[P]' }
+    if (member.roles.cache.find(role => role.id === gConfig.moderator) || member.hasPermission('ADMINISTRATOR')) { tempUserInfo.moderator = true; tempUserInfo.accessLevel = 3; tempUserInfo.prefix = '[M]' }
+    for (i = 0; i < fullControl.length; i++) {
+        if (member.id === fullControl[i]) {
             tempUserInfo.accessLevel = 4
+            tempUserInfo.prefix = '[M]'
         }
     }
     return tempUserInfo
 }
-function filterUserId(user_ping){
-    if(user_ping.endsWith('>')){
-        let user_id = user_ping.slice('2','-1');
-        if(user_id.startsWith('!') || user_id.startsWith('&') || user_id.startsWith('#')){
+function filterUserId(user_ping, message) {
+    if (user_ping.endsWith('>')) {
+        let user_id = user_ping.slice('2', '-1');
+        if (user_id.startsWith('!') || user_id.startsWith('&') || user_id.startsWith('#')) {
             user_id = user_id.slice('1');
         }
-        return user_id;   
+        return user_id;
+    } else {
+        let thisGuild = message.guild.members.cache
+        let id;
+        thisGuild.forEach(member => {
+            if (member.user.username.toLowerCase().includes(user_ping.toLowerCase())) {
+                id = member.user.id
+            }
+        })
+        if (id) {
+            return id
+        }
     }
     return user_ping
 }
-function grantFullControl(fcu){
-    fullControl.push(fcu)
-    setTimeout(()=>{
-        fullControl.shift()
-    },120000)
+function filterRoleId(user_ping, message) {
+    if (user_ping.endsWith('>')) {
+        let user_id = user_ping.slice('2', '-1');
+        if (user_id.startsWith('!') || user_id.startsWith('&') || user_id.startsWith('#')) {
+            user_id = user_id.slice('1');
+        }
+        return user_id;
+    } else {
+        let thisGuild = message.guild.roles.cache
+        let id;
+        thisGuild.forEach(role => {
+            if (role.name.toLowerCase().includes(user_ping.toLowerCase())) {
+                id = role.id
+            }
+        })
+        if (id) {
+            return id
+        }
+    }
+    return user_ping
 }
-function cmdLog(data){
+function grantFullControl(fcu) {
+    fullControl.push(fcu)
+    setTimeout(() => {
+        fullControl.shift()
+    }, 120000)
+}
+function cmdLog(data) {
     console.log(data)
     const currTime = new Date()
-    fs.appendFile('./log.txt',`\n${data} ::: ${currTime}`,(err)=>{
+    fs.appendFile('./log.txt', `\n${data} ::: ${currTime}`, (err) => {
         if (err) console.trace(err);
     })
 }
-function idToName(id,guild){
-    try{
+function idToName(id, guild) {
+    try {
         let uName = guild.members.cache.find(id_c => id_c == id).user.tag;
         return uName
-    } catch(e) {
+    } catch (e) {
         return id
     }
 }
@@ -189,29 +244,29 @@ function idToName(id,guild){
 //         return 'No Results.'
 //     }
 // }
-async function adminChatInit(){
+async function adminChatInit() {
     adminChatChannels = new Map()
     const allGuilds = await guildsdata.findAll();
-    for (i = 0; i < allGuilds.length; i++){
-        try{
+    for (i = 0; i < allGuilds.length; i++) {
+        try {
             const currGuild = allGuilds[i].dataValues;
-            adminChatChannels.set(currGuild.guild_id,JSON.parse(currGuild.config).admin_chat);
-        } catch(e){
+            adminChatChannels.set(currGuild.guild_id, JSON.parse(currGuild.config).admin_chat);
+        } catch (e) {
             console.trace(e)
         }
     }
 }
-function acRelay(message){
+function acRelay(message) {
     let attachments = []
     message.attachments.forEach(at => {
         attachments.push(at.url)
     });
-    adminChatChannels.forEach(async (cid,gid) => {
-        try{
+    adminChatChannels.forEach(async (cid, gid) => {
+        try {
             const acChannel = client.guilds.cache.get(gid).channels.cache.get(cid)
-            if(acChannel && cid !== message.channel.id){
+            if (acChannel && cid !== message.channel.id) {
                 const webhooks = await acChannel.fetchWebhooks();
-                if (webhooks.size === 0){
+                if (webhooks.size === 0) {
                     acChannel.createWebhook('ACBOT', {
                         avatar: 'https://i.imgur.com/wSTFkRM.png',
                     }).then(webhook => {
@@ -232,7 +287,7 @@ function acRelay(message){
                     });
                 }
             }
-        } catch(e) {
+        } catch (e) {
             //
         }
     })
@@ -245,32 +300,36 @@ client.once('ready', async () => {
     raids.sync();
     currentRaids.sync();
     storedRecData.sync();
+    rolereactions.sync();
     //OTHER
     adminChatInit() //Gets all the admin chat info
     client.user.setActivity(`##help`);
     console.log('[READY]')
 });
-
 client.on("guildCreate", guild => {
     cmdLog(`Client has joined ${guild.name}`);
 });
-
 client.on('guildMemberAdd', async member => {
-    if(member.user.bot){return}
+    if (member.user.bot) { return }
     const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
-    if(gData){
-        client.commands.get('addprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
+    if (gData) {
+        client.commands.get('addprofile').execute(cmdLog, JSON.parse(gData.config), member, profiles);
     }
 });
-
 client.on("guildMemberRemove", async member => {
-    if(member.user.bot){return}
+    if (member.user.bot) { return }
     const gData = await guildsdata.findOne({ where: { guild_id: member.guild.id } });
-    if(gData){
-        client.commands.get('removeprofile').execute(cmdLog,JSON.parse(gData.config),member,profiles);
+    if (gData) {
+        client.commands.get('removeprofile').execute(cmdLog, JSON.parse(gData.config), member, profiles);
     }
 });
+client.on("messageDelete", async message => {
+    const rolereaction = await rolereactions.findAll({ where: { messageID: message.id } })
 
+    rolereaction.forEach(rr => {
+        rr.destroy()
+    })
+});
 client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.partial) { //this whole section just checks if the reaction is partial
         try {
@@ -281,52 +340,68 @@ client.on('messageReactionAdd', async (reaction, user) => {
         }
     }
     if (!user.bot) {
-        if (reaction.emoji.name === '\u2705' && reaction.message.id === '815572072478146561') { //if the user reacted with the right emoji
-            const role = reaction.message.guild.roles.cache.find(r => r.name === 'Member'); //finds role you want to assign (you could also use .name instead of .id)
-
-            const { guild } = reaction.message; //store the guild of the reaction in variable
-
-            const member = guild.members.cache.find(member => member.id === user.id); //find the member who reacted (because user and member are seperate things)
-
-            member.roles.add(role); //assign selected role to member
+        try {
+            let rolereaction;
+            if (reaction.emoji.id) {
+                if (client.emojis.cache.filter(emoji => emoji.id === reaction.emoji.id).size == 0) {
+                    return
+                } else {
+                    rolereaction = await rolereactions.findOne({
+                        where: {
+                            [Op.and]: [{ emojiName: reaction.emoji.id }, { messageID: reaction.message.id }]
+                        }
+                    })
+                }
+            } else {
+                rolereaction = await rolereactions.findOne({
+                    where: {
+                        [Op.and]: [{ emojiName: reaction.emoji.name }, { messageID: reaction.message.id }]
+                    }
+                })
+            }
+            if (rolereaction) {
+                const memb = reaction.message.guild.members.cache.get(user.id)
+                memb.roles.add(rolereaction.role)
+            }
+        } catch (e) {
+            console.trace(e)
         }
     }
 });
 //ON COMMAND HANDLER
-client.on('message',async message => {
-    try{
-        if(message.author.bot) return;
-        for(o = 0; o < noch.length; o++){
-            if (message.channel.id === noch[o]){
-                for (oi = 0; oi < no.length; oi++){
-                    if(message.content.toLowerCase().includes(no[oi])){
-                        message.reply('Don\'t talk about Raid Shadow Legends sus.').then(msg => {msg.delete({timeout:2000})})
-                        message.delete({timeout:0})
+client.on('message', async message => {
+    try {
+        if (message.author.bot) return;
+        for (o = 0; o < noch.length; o++) {
+            if (message.channel.id === noch[o]) {
+                for (oi = 0; oi < no.length; oi++) {
+                    if (message.content.toLowerCase().includes(no[oi])) {
+                        message.reply('Don\'t talk about Raid Shadow Legends sus.').then(msg => { msg.delete({ timeout: 2000 }) })
+                        message.delete({ timeout: 0 })
                         return
                     }
                 }
-                return
             }
         }
         //checks if admin chat msg
         const adminChatChannel = adminChatChannels.get(message.guild.id)
-        if(adminChatChannel === message.channel.id){
+        if (adminChatChannel === message.channel.id) {
             acRelay(message)
             return
         }
         //resolves command and args
-        if(message.guild === null) return;
-        if(!message.content.startsWith(config.prefix)) return;
-        const args = message.content.slice((config.prefix.length)).trim().split(/ +/);
+        if (message.guild === null) return;
+        if (!message.content.startsWith(config.prefix)) return;
+        const args = message.content.slice((config.prefix.length)).trim().split(/ +/); //if multiple space it treats them like one space
         const command = args.shift().toLowerCase();
         const commandArgs = args.join(' ');
         //Gets guild config
         const gDataRaw = await guildsdata.findOne({ where: { guild_id: message.guild.id } });
         //GUILD SETUP IF NO GUILD DATA
-        if(!gDataRaw){
-            if(command === 'setup'){
-                if(message.member.hasPermission('ADMINISTRATOR')){
-                    guildSetup.execute(cmdLog,message,guildsdata,filterUserId,adminChatInit)
+        if (!gDataRaw) {
+            if (command === 'setup') {
+                if (message.member.hasPermission('ADMINISTRATOR')) {
+                    guildSetup.execute(cmdLog, message, guildsdata, filterUserId, filterRoleId, adminChatInit)
                 } else {
                     message.reply('Only an administrator can perform this.')
                 }
@@ -337,112 +412,114 @@ client.on('message',async message => {
         }
         const gData = JSON.parse(gDataRaw.config)
         //Gets user info
-        let userInfo = getUserInfo(message.member,gData)
+        let userInfo = getUserInfo(message.member, gData)
         let cmdAccessLevel;
-        if (client.commands.has(command)){
+        if (client.commands.has(command)) {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             cmdAccessLevel = client.commands.get(command).accessLevel;
         } else {
             cmdAccessLevel = 0;
         }
-        if (command === 'forcejoin' || command === 'forceleave' || command === 'forcejoinall' || command === 'updateconfig'){
-            if(message.member.hasPermission('ADMINISTRATOR')){
+        if (command === 'forcejoin' || command === 'forceleave' || command === 'forcejoinall' || command === 'updateconfig') {
+            if (message.member.hasPermission('ADMINISTRATOR')) {
                 cmdAccessLevel = 3;
             } else {
                 cmdAccessLevel = 4;
             }
-            
+
         }
         if (userInfo.accessLevel < cmdAccessLevel) {
-            message.reply(`Insufficient Permission`).then(msg => {msg.delete({timeout:5000})})
+            message.reply(`Insufficient Permission`).then(msg => { msg.delete({ timeout: 5000 }) })
             return
         }
         //Commands
-        if (command === 'ping'){
+        if (command === 'ping') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.channel.send(`Latency is \`${Date.now() - message.createdTimestamp}\`ms. API Latency is \`${Math.round(client.ws.ping)}\`ms`);
-        } else if (command === 'help'){
-            client.commands.get(command).execute(message,client,commandArgs,userInfo)
-        } else if(command === 'forcejoin'){
+        } else if (command === 'help') {
+            client.commands.get(command).execute(message, client, commandArgs, userInfo)
+        } else if (command === 'forcejoin') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
-            try{
-                const user_id = filterUserId(commandArgs)
+            try {
+                const user_id = filterUserId(commandArgs, message)
                 const forcejoin = message.guild.members.cache.get(user_id);
-                if(forcejoin){
+                if (forcejoin) {
                     client.emit('guildMemberAdd', forcejoin);
                 }
-            } catch(e){
+            } catch (e) {
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
             }
-        } else if(command === 'forceleave'){
+        } else if (command === 'forceleave') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
-            try{
-                const user_id = filterUserId(commandArgs)
+            try {
+                const user_id = filterUserId(commandArgs, message)
                 const forcejoin = message.guild.members.cache.get(user_id);
-                if(forcejoin){
+                if (forcejoin) {
                     client.emit('guildMemberRemove', forcejoin);
                 }
-            } catch(e){
+            } catch (e) {
                 console.trace(e)
                 cmdLog('Error while trying to forcejoin a user.')
             }
-        } else if(command === 'forcejoinall'){
+        } else if (command === 'forcejoinall') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
             message.guild.members.cache.forEach(mbr => {
-                try{
+                try {
                     client.emit('guildMemberAdd', mbr);
-                } catch(e){
+                } catch (e) {
                     console.trace(e)
                     cmdLog('Error while trying to forcejoin a user.')
                 }
             })
-        } else if (command === 'admin'){
-            client.commands.get(command).execute(cmdLog,message,fullControl,grantFullControl,adminChatInit);
-        } else if (command === 'profile'){
-            client.commands.get(command).execute(message,client,commandArgs,profiles,filterUserId);
-        } else if (command === 'removeprofile'){
-            client.commands.get(command).execute(gData,message.guild.members.cache.get(commandArgs),profiles);
-        } else if (command === 'recipe'){
-            client.commands.get(command).execute(message,commandArgs);
-        } else if (command === 'forceaddraid'){
-            client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,raids,filterUserId,idToName);
-        } else if (command === 'addnote'){
-            client.commands.get(command).execute(cmdLog,message,commandArgs,profiles,filterUserId,idToName);
-        } else if (command === 'getlog'){
+        } else if (command === 'admin') {
+            client.commands.get(command).execute(cmdLog, message, fullControl, grantFullControl, adminChatInit);
+        } else if (command === 'profile') {
+            client.commands.get(command).execute(message, client, commandArgs, profiles, filterUserId);
+        } else if (command === 'removeprofile') {
+            client.commands.get(command).execute(gData, message.guild.members.cache.get(commandArgs), profiles);
+        } else if (command === 'recipe') {
+            client.commands.get(command).execute(message, commandArgs);
+        } else if (command === 'forceaddraid') {
+            client.commands.get(command).execute(cmdLog, message, commandArgs, profiles, raids, filterUserId, idToName);
+        } else if (command === 'addnote') {
+            client.commands.get(command).execute(cmdLog, message, commandArgs, profiles, filterUserId, idToName);
+        } else if (command === 'getlog') {
             client.commands.get(command).execute(message)
-        } else if (command === 'startraid'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,raids);
-        } else if (command === 'documentraid'){
-            client.commands.get(command).execute(cmdLog,message,commandArgs,raids,profiles,currentRaids,getUserInfo,gData,userInfo.accessLevel);
-        } else if (command === 'removeraid'){
-            client.commands.get(command).execute(commandArgs,currentRaids,storedRecData);
-        } else if (command === 'removeoldraid'){
-            client.commands.get(command).execute(commandArgs,raids,storedRecData);
+        } else if (command === 'startraid') {
+            client.commands.get(command).execute(cmdLog, gData, message, commandArgs, currentRaids, raids);
+        } else if (command === 'documentraid') {
+            client.commands.get(command).execute(cmdLog, message, commandArgs, raids, profiles, currentRaids, getUserInfo, gData, userInfo.accessLevel);
+        } else if (command === 'removeraid') {
+            client.commands.get(command).execute(commandArgs, currentRaids, storedRecData);
+        } else if (command === 'removeoldraid') {
+            client.commands.get(command).execute(commandArgs, raids, storedRecData);
         } else if (command === 'idtoname') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
-            message.reply(idToName(commandArgs,message.guild));
+            message.reply(idToName(commandArgs, message.guild));
         } else if (command === 'nametoid') {
             cmdLog(`[${message.guild.name}] USER [${message.member.user.tag}] : [${userInfo.accessLevel}] EXECUTED [${command}]`)
-            message.reply(nameToId(commandArgs,message.member));
+            message.reply(nameToId(commandArgs, message.member));
         } else if (command === 'r') {
-            client.commands.get(command).execute(message,commandArgs,currentRaids,storedRecData,userInfo);
+            client.commands.get(command).execute(message, commandArgs, currentRaids, storedRecData, userInfo);
         } else if (command === 'rold') {
-            client.commands.get(command).execute(message,raids);
-        } else if (command === 'progress'){
-            client.commands.get(command).execute(cmdLog,gData,message,commandArgs,currentRaids,storedRecData,userInfo);
-        } else if (command === 'sugarlegions'){
+            client.commands.get(command).execute(message, raids);
+        } else if (command === 'progress') {
+            client.commands.get(command).execute(cmdLog, gData, message, commandArgs, currentRaids, storedRecData, userInfo);
+        } else if (command === 'sugarlegions') {
             client.commands.get(command).execute(message);
-        } else if (command === 'updateconfig'){
-            client.commands.get(command).execute(cmdLog,message,guildsdata,filterUserId,adminChatInit);
-        } else if (command === 'plogs'){
+        } else if (command === 'updateconfig') {
+            client.commands.get(command).execute(cmdLog, message, guildsdata, filterUserId, filterRoleId, adminChatInit);
+        } else if (command === 'plogs') {
             //
-        } else if (command === 't'){
-            //
+        } else if (command === 'rreact') {
+            client.commands.get(command).execute(cmdLog, message, commandArgs, rolereactions, filterRoleId);
+        } else if (command === 'ppurge') {
+            client.commands.get(command).execute(cmdLog, message, gData);
         }
-    } catch(e) {
+    } catch (e) {
         console.trace(e)
     }
 });
 
-client.login('ODA4MDQzODg4MzA4MjU2Nzc4.YCAzgw.xfTXogT3tcD_2dP21cRkxhbY3m8');
+client.login(token);
